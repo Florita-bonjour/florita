@@ -41,12 +41,6 @@
     }
 
     /* ── Grille de champs ── */
-    .field-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
     .field {
       display: flex;
       flex-direction: column;
@@ -193,8 +187,7 @@
     .btn-generate svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     @media (max-width: 600px) {
-      .field-grid    { grid-template-columns: 1fr; }
-      .measure-row   { grid-template-columns: 1fr 100px 36px; }
+      .measure-row { grid-template-columns: 1fr 100px 36px; }
     }
   </style>
 </head>
@@ -221,36 +214,22 @@
 
         <form id="cr-form" novalidate>
 
-          <!-- Patient & destination -->
+          <!-- Destination -->
           <div class="form-section">
             <div class="section-head">
-              <span class="section-title">Patient</span>
+              <span class="section-title">Destination</span>
             </div>
-            <div class="field-grid">
-              <div class="field">
-                <label for="patient">Nom et prénom</label>
-                <input type="text" id="patient" placeholder="ex : Dupont Marie" />
-              </div>
-              <div class="field">
-                <label for="dob">Date de naissance</label>
-                <input type="text" id="dob" placeholder="ex : 12/03/1952" />
-              </div>
-              <div class="field">
-                <label for="therapist">Thérapeute</label>
-                <input type="text" id="therapist" placeholder="ex : Sophie Martin" />
-              </div>
-              <div class="field">
-                <label for="destination">Destination</label>
-                <select id="destination">
-                  <option value="">Sélectionner…</option>
-                  <option value="ANAH">ANAH</option>
-                  <option value="MDPH">MDPH</option>
-                  <option value="Caisse de retraite">Caisse de retraite</option>
-                  <option value="Mutuelle">Mutuelle</option>
-                  <option value="Retour hospitalisation">Retour hospitalisation</option>
-                  <option value="Autre">Autre</option>
-                </select>
-              </div>
+            <div class="field">
+              <label for="destination">Destinataire du compte rendu</label>
+              <select id="destination">
+                <option value="">Sélectionner…</option>
+                <option value="ANAH">ANAH</option>
+                <option value="MDPH">MDPH</option>
+                <option value="Caisse de retraite">Caisse de retraite</option>
+                <option value="Mutuelle">Mutuelle</option>
+                <option value="Retour hospitalisation">Retour hospitalisation</option>
+                <option value="Autre">Autre</option>
+              </select>
             </div>
           </div>
 

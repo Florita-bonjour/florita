@@ -13,21 +13,14 @@ function esc(str) {
 }
 
 const params      = new URLSearchParams(window.location.search);
-const patient     = params.get('patient')     || '';
-const dob         = params.get('dob')         || '';
-const therapist   = params.get('therapist')   || '';
 const destination = params.get('destination') || '';
 const notes       = params.get('notes')       || '';
 let   measures    = [];
 try { measures = JSON.parse(params.get('measures') || '[]'); } catch (_) {}
 
-const hasData = patient || dob || therapist || destination || notes || measures.length;
+const hasData = destination || notes || measures.length;
 
 if (hasData) {
-  if (patient)   document.getElementById('field-patient').textContent   = patient;
-  if (dob)       document.getElementById('field-dob').textContent       = dob;
-  if (therapist) document.getElementById('field-therapist').textContent = therapist;
-
   let crHTML = '';
   if (destination) crHTML += `<h3>Destination</h3><p>${esc(destination)}</p>`;
   if (notes)       crHTML += `<h3>Observations</h3><p>${esc(notes).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
@@ -37,7 +30,6 @@ if (hasData) {
       crHTML += `<p>${esc(label || '—')} : <strong>${esc(value ? value + ' cm' : '—')}</strong></p>`;
     });
   }
-
   if (crHTML) document.getElementById('cr-editor').innerHTML = crHTML;
 } else {
   document.getElementById('cr-editor').innerHTML =

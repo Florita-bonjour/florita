@@ -45,9 +45,6 @@ function esc(str) {
 document.getElementById('cr-form').addEventListener('submit', (e) => {
   e.preventDefault();
 
-  const patient     = document.getElementById('patient').value.trim();
-  const dob         = document.getElementById('dob').value.trim();
-  const therapist   = document.getElementById('therapist').value.trim();
   const destination = document.getElementById('destination').value;
   const notes       = document.getElementById('notes').value.trim();
 
@@ -59,12 +56,9 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
   });
 
   const params = new URLSearchParams();
-  if (patient)          params.set('patient',     patient);
-  if (dob)              params.set('dob',          dob);
-  if (therapist)        params.set('therapist',    therapist);
-  if (destination)      params.set('destination',  destination);
-  if (notes)            params.set('notes',         notes);
-  if (measures.length)  params.set('measures',      JSON.stringify(measures));
+  if (destination)     params.set('destination', destination);
+  if (notes)           params.set('notes',        notes);
+  if (measures.length) params.set('measures',     JSON.stringify(measures));
 
   window.location.href = `index.html?${params.toString()}`;
 });
