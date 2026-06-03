@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compte Rendu — Ergothérapie</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .topbar-nav { display: flex; gap: 0.25rem; }
+    .nav-link {
+      padding: 0.35rem 0.85rem;
+      border-radius: 5px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: background 0.12s, color 0.12s;
+    }
+    .nav-link:hover  { background: #f0f4f8; color: var(--text); }
+    .nav-link.active { background: #e8f0f8; color: var(--accent); }
+  </style>
 </head>
 <body>
   <div class="layout">
@@ -16,6 +30,10 @@
         </svg>
         <span class="brand-name">Florita</span>
       </div>
+      <nav class="topbar-nav">
+        <a href="formulaire.html" class="nav-link">Formulaire</a>
+        <a href="index.html" class="nav-link active">Compte rendu</a>
+      </nav>
       <button id="btn-pdf" class="btn-pdf" aria-label="Télécharger le compte rendu en PDF">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

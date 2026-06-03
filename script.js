@@ -3,10 +3,46 @@ document.getElementById('doc-date').textContent = new Date().toLocaleDateString(
   day: 'numeric', month: 'long', year: 'numeric'
 });
 
-/* ── Contenu du compte rendu injecté ───────────────────────────────── */
-const crHTML = `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`.trim();
+/* ── Injection depuis le formulaire (query string) ─────────────────── */
+function esc(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
-document.getElementById('cr-editor').innerHTML = crHTML;
+const params      = new URLSearchParams(window.location.search);
+const patient     = params.get('patient')     || '';
+const dob         = params.get('dob')         || '';
+const therapist   = params.get('therapist')   || '';
+const destination = params.get('destination') || '';
+const notes       = params.get('notes')       || '';
+let   measures    = [];
+try { measures = JSON.parse(params.get('measures') || '[]'); } catch (_) {}
+
+const hasData = patient || dob || therapist || destination || notes || measures.length;
+
+if (hasData) {
+  if (patient)   document.getElementById('field-patient').textContent   = patient;
+  if (dob)       document.getElementById('field-dob').textContent       = dob;
+  if (therapist) document.getElementById('field-therapist').textContent = therapist;
+
+  let crHTML = '';
+  if (destination) crHTML += `<h3>Destination</h3><p>${esc(destination)}</p>`;
+  if (notes)       crHTML += `<h3>Observations</h3><p>${esc(notes).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
+  if (measures.length) {
+    crHTML += '<h3>Mesures relevées</h3>';
+    measures.forEach(({ label, value }) => {
+      crHTML += `<p>${esc(label || '—')} : <strong>${esc(value ? value + ' cm' : '—')}</strong></p>`;
+    });
+  }
+
+  if (crHTML) document.getElementById('cr-editor').innerHTML = crHTML;
+} else {
+  document.getElementById('cr-editor').innerHTML =
+    `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
+}
 
 /* ── Export PDF ─────────────────────────────────────────────────────── */
 document.getElementById('btn-pdf').addEventListener('click', exportPDF);
