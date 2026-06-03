@@ -1,0 +1,253 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --accent:      #1a4f7a;
+  --accent-dark: #133c5d;
+  --text:        #1c2b3a;
+  --muted:       #637080;
+  --border:      #d0d7de;
+  --bg:          #edf0f4;
+  --surface:     #ffffff;
+  --shadow:      0 2px 18px rgba(0, 0, 0, 0.09);
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Topbar ─────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 58px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--accent);
+}
+
+.brand-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.btn-pdf:hover  { background: var(--accent-dark); }
+.btn-pdf:active { transform: translateY(1px); }
+
+.btn-pdf svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Workspace ──────────────────────────────── */
+.workspace {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1rem 4rem;
+}
+
+/* ── Document (paper card) ──────────────────── */
+.document {
+  width: 100%;
+  max-width: 800px;
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  padding: 3.5rem 4rem;
+}
+
+/* ── Doc meta header ────────────────────────── */
+.doc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.practice-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+
+.practice-address {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.doc-date {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ── Separator ──────────────────────────────── */
+.separator {
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+  opacity: 0.22;
+  margin-bottom: 1.5rem;
+  border-radius: 1px;
+}
+
+/* ── Patient block ──────────────────────────── */
+.patient-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 2.5rem;
+  background: #f6f8fa;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.patient-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+}
+
+.field-label {
+  color: var(--muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.field-value {
+  font-weight: 600;
+  color: var(--text);
+  min-width: 60px;
+  border-radius: 3px;
+  padding: 1px 3px;
+  transition: box-shadow 0.12s;
+}
+
+.field-value:focus {
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ── CR title ───────────────────────────────── */
+.doc-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.6rem;
+}
+
+/* ── Main editor ────────────────────────────── */
+.cr-editor {
+  min-height: 480px;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text);
+  outline: none;
+}
+
+.cr-editor h3 {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 1.6rem 0 0.55rem;
+}
+
+.cr-editor h3:first-child {
+  margin-top: 0;
+}
+
+.cr-editor p {
+  margin-bottom: 0.7rem;
+}
+
+.cr-editor p:last-child {
+  margin-bottom: 0;
+}
+
+.cr-placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── Footer ─────────────────────────────────── */
+.doc-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.signature-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.signature-line {
+  width: 160px;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 680px) {
+  .document   { padding: 2rem 1.25rem; }
+  .topbar     { padding: 0 1rem; }
+  .brand-name { display: none; }
+  .btn-pdf span { display: none; }
+  .btn-pdf    { padding: 0.5rem 0.75rem; }
+}

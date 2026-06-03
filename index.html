@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compte Rendu — Ergothérapie</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+        <span class="brand-name">Florita</span>
+      </div>
+      <button id="btn-pdf" class="btn-pdf" aria-label="Télécharger le compte rendu en PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Télécharger en PDF</span>
+      </button>
+    </header>
+
+    <main class="workspace">
+      <div class="document">
+
+        <div class="doc-meta">
+          <div class="practice">
+            <div class="practice-name">Cabinet d'Ergothérapie</div>
+            <div class="practice-address">12 rue des Lilas — 75000 Paris</div>
+          </div>
+          <div id="doc-date" class="doc-date"></div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="patient-block">
+          <div class="patient-row">
+            <span class="field-label">Patient</span>
+            <span class="field-value" id="field-patient" contenteditable="true" spellcheck="false">—</span>
+          </div>
+          <div class="patient-row">
+            <span class="field-label">Date de naissance</span>
+            <span class="field-value" id="field-dob" contenteditable="true" spellcheck="false">—</span>
+          </div>
+          <div class="patient-row">
+            <span class="field-label">Thérapeute</span>
+            <span class="field-value" id="field-therapist" contenteditable="true" spellcheck="false">—</span>
+          </div>
+        </div>
+
+        <h2 class="doc-title">Compte Rendu d'Évaluation Ergothérapique</h2>
+
+        <div id="cr-editor" class="cr-editor" contenteditable="true" spellcheck="true"></div>
+
+        <div class="doc-footer">
+          <p class="signature-label">Signature du thérapeute</p>
+          <div class="signature-line"></div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
