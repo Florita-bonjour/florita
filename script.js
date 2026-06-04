@@ -74,57 +74,20 @@ async function generateCR(destination, notes, measures, trame) {
   editor.setAttribute('contenteditable', 'false');
   editor.innerHTML = `<p class="cr-placeholder" style="font-style:italic;opacity:.7;">Génération du compte rendu en cours…</p>`;
 
-  let apiKey = localStorage.getItem('anthropic_api_key') || '';
-  if (!apiKey) {
-    apiKey = window.prompt('Clé API Anthropic (mémorisée localement) :');
-    if (!apiKey) {
-      editor.setAttribute('contenteditable', 'true');
-      editor.innerHTML = `<p class="cr-placeholder">Clé API manquante. Rechargez la page pour réessayer.</p>`;
-      return;
-    }
-    localStorage.setItem('anthropic_api_key', apiKey.trim());
-    apiKey = apiKey.trim();
-  }
-
-  let userContent = 'Génère un compte rendu d\'évaluation ergothérapique professionnel en français à partir des données suivantes :\n\n';
-  if (destination) userContent += `Destination / objectif : ${destination}\n\n`;
-  if (notes)       userContent += `Observations cliniques :\n${notes}\n\n`;
-  if (measures.length) {
-    userContent += 'Mesures relevées :\n';
-    measures.forEach(({ label, value }) => {
-      userContent += `- ${label || '—'} : ${value ? value + ' cm' : '—'}\n`;
-    });
-    userContent += '\n';
-  }
-  if (trame) userContent += `\nComplète la trame suivante en renseignant chaque rubrique à partir des informations ci-dessus. Conserve exactement les titres et la structure. Si une information manque, écris À compléter par l'ergothérapeute.\n\nTRAME :\n${trame}`;
-  else       userContent += 'Rédige un compte rendu structuré, clinique et professionnel. Utilise uniquement du texte courant (pas de markdown, pas de listes à puces). Chaque paragraphe thématique doit être séparé par une ligne vide. Ne génère pas de titre général ni d\'en-tête.';
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/.netlify/functions/generate-cr', {
       method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
-        system: 'Tu es un assistant spécialisé en ergothérapie. Tu remplis une trame de compte rendu à partir des notes brutes. RÈGLES : 1) Tu n\'inventes rien qui ne soit pas dans les notes. 2) Si une information manque pour une section, encadre le contenu avec §§ et §§, ex : §§À compléter par l\'ergothérapeute§§. 3) Reformule en langage professionnel sans ajouter de contenu. 4) Termes interdits : chutogène (utiliser : risque de chute) ; glissance (utiliser : risque de chute ou surface glissante). 5) Commence par BROUILLON.',
-        messages: [{ role: 'user', content: userContent }],
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ destination, notes, measures, trame }),
     });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `Erreur HTTP ${response.status}`);
-    }
 
     const data = await response.json();
-    const text = data.content?.[0]?.text || '';
 
-    editor.innerHTML = mdToHTML(text);
+    if (!response.ok) {
+      throw new Error(data.error || `Erreur HTTP ${response.status}`);
+    }
+
+    editor.innerHTML = mdToHTML(data.text || '');
 
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
