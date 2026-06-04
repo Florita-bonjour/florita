@@ -21,19 +21,75 @@ try { measures = JSON.parse(params.get('measures') || '[]'); } catch (_) {}
 const hasData = destination || notes || measures.length;
 
 if (hasData) {
-  let crHTML = '';
-  if (destination) crHTML += `<h3>Destination</h3><p>${esc(destination)}</p>`;
-  if (notes)       crHTML += `<h3>Observations</h3><p>${esc(notes).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
-  if (measures.length) {
-    crHTML += '<h3>Mesures relevées</h3>';
-    measures.forEach(({ label, value }) => {
-      crHTML += `<p>${esc(label || '—')} : <strong>${esc(value ? value + ' cm' : '—')}</strong></p>`;
-    });
-  }
-  if (crHTML) document.getElementById('cr-editor').innerHTML = crHTML;
+  generateCR(destination, notes, measures);
 } else {
   document.getElementById('cr-editor').innerHTML =
     `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
+}
+
+async function generateCR(destination, notes, measures) {
+  const editor = document.getElementById('cr-editor');
+
+  editor.setAttribute('contenteditable', 'false');
+  editor.innerHTML = `<p class="cr-placeholder" style="font-style:italic;opacity:.7;">Génération du compte rendu en cours…</p>`;
+
+  let apiKey = localStorage.getItem('anthropic_api_key') || '';
+  if (!apiKey) {
+    apiKey = window.prompt('Clé API Anthropic (mémorisée localement) :');
+    if (!apiKey) {
+      editor.setAttribute('contenteditable', 'true');
+      editor.innerHTML = `<p class="cr-placeholder">Clé API manquante. Rechargez la page pour réessayer.</p>`;
+      return;
+    }
+    localStorage.setItem('anthropic_api_key', apiKey.trim());
+    apiKey = apiKey.trim();
+  }
+
+  let userContent = 'Génère un compte rendu d\'évaluation ergothérapique professionnel en français à partir des données suivantes :\n\n';
+  if (destination) userContent += `Destination / objectif : ${destination}\n\n`;
+  if (notes)       userContent += `Observations cliniques :\n${notes}\n\n`;
+  if (measures.length) {
+    userContent += 'Mesures relevées :\n';
+    measures.forEach(({ label, value }) => {
+      userContent += `- ${label || '—'} : ${value ? value + ' cm' : '—'}\n`;
+    });
+    userContent += '\n';
+  }
+  userContent += 'Rédige un compte rendu structuré, clinique et professionnel. Utilise uniquement du texte courant (pas de markdown, pas de listes à puces). Chaque paragraphe thématique doit être séparé par une ligne vide. Ne génère pas de titre général ni d\'en-tête.';
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 4000,
+        system: 'Tu es un assistant spécialisé en ergothérapie. Tu remplis une trame de compte rendu à partir des notes brutes. RÈGLES : 1) Tu n\'inventes rien qui ne soit pas dans les notes. 2) Si une section manque écris À compléter par l\'ergothérapeute. 3) Reformule en langage professionnel sans ajouter de contenu. 4) Jamais le terme chutogène. 5) Commence par BROUILLON.',
+        messages: [{ role: 'user', content: userContent }],
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Erreur HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || '';
+
+    const paragraphs = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+    editor.innerHTML = paragraphs.map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
+
+  } catch (err) {
+    editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
+  } finally {
+    editor.setAttribute('contenteditable', 'true');
+  }
 }
 
 /* ── Export PDF ─────────────────────────────────────────────────────── */
