@@ -134,60 +134,60 @@ async function generateCR(destination, notes, measures, trame) {
 }
 
 /* ── Export Word ─────────────────────────────────────────────────────── */
-document.getElementById(‘btn-word’).addEventListener(‘click’, exportWord);
+document.getElementById('btn-word').addEventListener('click', exportWord);
 
 async function exportWord() {
   const { Document, Paragraph, TextRun, Packer } = window.docx;
 
-  const patient   = document.getElementById(‘field-patient’).textContent.trim();
-  const dob       = document.getElementById(‘field-dob’).textContent.trim();
-  const therapist = document.getElementById(‘field-therapist’).textContent.trim();
-  const date      = document.getElementById(‘doc-date’).textContent.trim();
+  const patient   = document.getElementById('field-patient').textContent.trim();
+  const dob       = document.getElementById('field-dob').textContent.trim();
+  const therapist = document.getElementById('field-therapist').textContent.trim();
+  const date      = document.getElementById('doc-date').textContent.trim();
 
   const children = [
-    new Paragraph({ children: [new TextRun({ text: "Cabinet d’Ergothérapie", bold: true, size: 24 })] }),
-    new Paragraph({ children: [new TextRun({ text: date, color: ‘637080’, size: 18 })] }),
-    new Paragraph({ children: [new TextRun({ text: ‘’ })] }),
+    new Paragraph({ children: [new TextRun({ text: "Cabinet d'Ergothérapie", bold: true, size: 24 })] }),
+    new Paragraph({ children: [new TextRun({ text: date, color: '637080', size: 18 })] }),
+    new Paragraph({ children: [new TextRun({ text: '' })] }),
     new Paragraph({ children: [new TextRun({ text: `Patient : ${patient}` })] }),
     new Paragraph({ children: [new TextRun({ text: `Date de naissance : ${dob}` })] }),
     new Paragraph({ children: [new TextRun({ text: `Thérapeute : ${therapist}` })] }),
-    new Paragraph({ children: [new TextRun({ text: ‘’ })] }),
-    new Paragraph({ children: [new TextRun({ text: "COMPTE RENDU D’ÉVALUATION ERGOTHÉRAPIQUE", bold: true, size: 22 })] }),
+    new Paragraph({ children: [new TextRun({ text: '' })] }),
+    new Paragraph({ children: [new TextRun({ text: "COMPTE RENDU D'ÉVALUATION ERGOTHÉRAPIQUE", bold: true, size: 22 })] }),
     new Paragraph({
       children: [],
-      border: { bottom: { style: ‘single’, size: 6, color: ‘D0D7DE’, space: 1 } },
+      border: { bottom: { style: 'single', size: 6, color: 'D0D7DE', space: 1 } },
       spacing: { after: 160 },
     }),
   ];
 
-  const editor = document.getElementById(‘cr-editor’);
+  const editor = document.getElementById('cr-editor');
 
   for (const node of editor.childNodes) {
     if (node.nodeType !== Node.ELEMENT_NODE) continue;
 
-    if (node.tagName === ‘H3’) {
+    if (node.tagName === 'H3') {
       children.push(new Paragraph({
         children: [new TextRun({ text: node.textContent, bold: true, size: 20 })],
         spacing: { before: 240, after: 80 },
       }));
 
-    } else if (node.tagName === ‘HR’) {
+    } else if (node.tagName === 'HR') {
       children.push(new Paragraph({
         children: [],
-        border: { bottom: { style: ‘single’, size: 4, color: ‘D0D7DE’, space: 1 } },
+        border: { bottom: { style: 'single', size: 4, color: 'D0D7DE', space: 1 } },
         spacing: { before: 80, after: 80 },
       }));
 
-    } else if (node.tagName === ‘P’) {
+    } else if (node.tagName === 'P') {
       const runs = [];
       for (const child of node.childNodes) {
         if (child.nodeType === Node.TEXT_NODE) {
           if (child.textContent) runs.push(new TextRun({ text: child.textContent }));
-        } else if (child.tagName === ‘STRONG’) {
+        } else if (child.tagName === 'STRONG') {
           runs.push(new TextRun({ text: child.textContent, bold: true }));
-        } else if (child.tagName === ‘MARK’) {
+        } else if (child.tagName === 'MARK') {
           runs.push(new TextRun({ text: child.textContent }));
-        } else if (child.tagName === ‘BR’) {
+        } else if (child.tagName === 'BR') {
           runs.push(new TextRun({ break: 1 }));
         }
       }
@@ -198,9 +198,9 @@ async function exportWord() {
   const doc  = new Document({ sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
   const url  = URL.createObjectURL(blob);
-  const a    = document.createElement(‘a’);
+  const a    = document.createElement('a');
   a.href     = url;
-  a.download = ‘compte-rendu-ergotherapie.docx’;
+  a.download = 'compte-rendu-ergotherapie.docx';
   a.click();
   URL.revokeObjectURL(url);
 }
