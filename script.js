@@ -16,6 +16,41 @@ function esc(str) {
     .replace(/"/g, '&quot;');
 }
 
+function inline(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/§§(.+?)§§/g, '<mark class="hl">$1</mark>');
+}
+
+function mdToHTML(text) {
+  const lines = text.split('\n');
+  const html  = [];
+  let para     = [];
+
+  const flushPara = () => {
+    if (!para.length) return;
+    html.push(`<p>${inline(esc(para.join('\n')).replace(/\n/g, '<br>'))}</p>`);
+    para = [];
+  };
+
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    if (line.trim() === '---') {
+      flushPara();
+      html.push('<hr>');
+    } else if (/^## /.test(line)) {
+      flushPara();
+      html.push(`<h3>${inline(esc(line.replace(/^## /, '')))}</h3>`);
+    } else if (line.trim() === '') {
+      flushPara();
+    } else {
+      para.push(line);
+    }
+  }
+  flushPara();
+  return html.join('');
+}
+
 const params      = new URLSearchParams(window.location.search);
 const destination = params.get('destination') || '';
 const notes       = params.get('notes')       || '';
@@ -76,7 +111,7 @@ async function generateCR(destination, notes, measures, trame) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 4000,
-        system: 'Tu es un assistant spécialisé en ergothérapie. Tu remplis une trame de compte rendu à partir des notes brutes. RÈGLES : 1) Tu n\'inventes rien qui ne soit pas dans les notes. 2) Si une section manque écris À compléter par l\'ergothérapeute. 3) Reformule en langage professionnel sans ajouter de contenu. 4) Jamais le terme chutogène. 5) Commence par BROUILLON.',
+        system: 'Tu es un assistant spécialisé en ergothérapie. Tu remplis une trame de compte rendu à partir des notes brutes. RÈGLES : 1) Tu n\'inventes rien qui ne soit pas dans les notes. 2) Si une information manque pour une section, encadre le contenu avec §§ et §§, ex : §§À compléter par l\'ergothérapeute§§. 3) Reformule en langage professionnel sans ajouter de contenu. 4) Termes interdits : chutogène (utiliser : risque de chute) ; glissance (utiliser : risque de chute ou surface glissante). 5) Commence par BROUILLON.',
         messages: [{ role: 'user', content: userContent }],
       }),
     });
@@ -89,10 +124,7 @@ async function generateCR(destination, notes, measures, trame) {
     const data = await response.json();
     const text = data.content?.[0]?.text || '';
 
-    const paragraphs = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-    editor.innerHTML = paragraphs.map(p =>
-      `<p>${esc(p).replace(/\n/g, '<br>').replace(/§§(.+?)§§/g, '<mark class="hl">$1</mark>')}</p>`
-    ).join('');
+    editor.innerHTML = mdToHTML(text);
 
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
@@ -101,138 +133,74 @@ async function generateCR(destination, notes, measures, trame) {
   }
 }
 
-/* ── Export PDF ─────────────────────────────────────────────────────── */
-document.getElementById('btn-pdf').addEventListener('click', exportPDF);
+/* ── Export Word ─────────────────────────────────────────────────────── */
+document.getElementById(‘btn-word’).addEventListener(‘click’, exportWord);
 
-function exportPDF() {
-  const { jsPDF } = window.jspdf;
+async function exportWord() {
+  const { Document, Paragraph, TextRun, Packer } = window.docx;
 
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const PW  = 210;
-  const PH  = 297;
-  const ML  = 22;
-  const MR  = 22;
-  const MT  = 22;
-  const MB  = 22;
-  const TW  = PW - ML - MR;
+  const patient   = document.getElementById(‘field-patient’).textContent.trim();
+  const dob       = document.getElementById(‘field-dob’).textContent.trim();
+  const therapist = document.getElementById(‘field-therapist’).textContent.trim();
+  const date      = document.getElementById(‘doc-date’).textContent.trim();
 
-  let y = MT;
-
-  const newPage = () => { doc.addPage(); y = MT; };
-  const guard   = (h = 7) => { if (y + h > PH - MB) newPage(); };
-
-  const ACCENT = [26,  79, 122];
-  const TEXT   = [28,  43,  58];
-  const MUTED  = [99, 112, 128];
-  const BORDER = [208, 215, 222];
-
-  /* ── En-tête du document ── */
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(...ACCENT);
-  doc.text("Cabinet d'Ergothérapie", ML, y);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...MUTED);
-  doc.text(document.getElementById('doc-date').textContent, PW - MR, y, { align: 'right' });
-
-  y += 4.5;
-  doc.text('12 rue des Lilas — 75000 Paris', ML, y);
-
-  y += 5;
-  doc.setDrawColor(...ACCENT);
-  doc.setLineWidth(0.4);
-  doc.line(ML, y, PW - MR, y);
-  y += 8;
-
-  /* ── Infos patient ── */
-  const patient   = document.getElementById('field-patient').textContent.trim();
-  const dob       = document.getElementById('field-dob').textContent.trim();
-  const therapist = document.getElementById('field-therapist').textContent.trim();
-
-  const infos = [
-    ['Patient :', patient],
-    ['Date de naissance :', dob],
-    ['Thérapeute :', therapist],
+  const children = [
+    new Paragraph({ children: [new TextRun({ text: "Cabinet d’Ergothérapie", bold: true, size: 24 })] }),
+    new Paragraph({ children: [new TextRun({ text: date, color: ‘637080’, size: 18 })] }),
+    new Paragraph({ children: [new TextRun({ text: ‘’ })] }),
+    new Paragraph({ children: [new TextRun({ text: `Patient : ${patient}` })] }),
+    new Paragraph({ children: [new TextRun({ text: `Date de naissance : ${dob}` })] }),
+    new Paragraph({ children: [new TextRun({ text: `Thérapeute : ${therapist}` })] }),
+    new Paragraph({ children: [new TextRun({ text: ‘’ })] }),
+    new Paragraph({ children: [new TextRun({ text: "COMPTE RENDU D’ÉVALUATION ERGOTHÉRAPIQUE", bold: true, size: 22 })] }),
+    new Paragraph({
+      children: [],
+      border: { bottom: { style: ‘single’, size: 6, color: ‘D0D7DE’, space: 1 } },
+      spacing: { after: 160 },
+    }),
   ];
 
-  doc.setFontSize(8.5);
-  infos.forEach(([label, value]) => {
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...MUTED);
-    doc.text(label, ML, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...TEXT);
-    doc.text(value, ML + doc.getTextWidth(label) + 2, y);
-    y += 5.5;
-  });
-
-  y += 5;
-
-  /* ── Titre du CR ── */
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9.5);
-  doc.setTextColor(...ACCENT);
-  doc.text('COMPTE RENDU D’ÉVALUATION ERGOTHÉRAPIQUE', ML, y);
-  y += 4;
-  doc.setDrawColor(...BORDER);
-  doc.setLineWidth(0.25);
-  doc.line(ML, y, PW - MR, y);
-  y += 8;
-
-  /* ── Corps du document ── */
-  const editor = document.getElementById('cr-editor');
+  const editor = document.getElementById(‘cr-editor’);
 
   for (const node of editor.childNodes) {
     if (node.nodeType !== Node.ELEMENT_NODE) continue;
 
-    if (node.tagName === 'H3') {
-      guard(14);
-      y += 3;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.5);
-      doc.setTextColor(...ACCENT);
-      doc.text(node.textContent.replace(/§§(.+?)§§/g, '$1').toUpperCase(), ML, y);
-      y += 6;
+    if (node.tagName === ‘H3’) {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: node.textContent, bold: true, size: 20 })],
+        spacing: { before: 240, after: 80 },
+      }));
 
-    } else if (node.tagName === 'P') {
-      guard(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.setTextColor(...TEXT);
+    } else if (node.tagName === ‘HR’) {
+      children.push(new Paragraph({
+        children: [],
+        border: { bottom: { style: ‘single’, size: 4, color: ‘D0D7DE’, space: 1 } },
+        spacing: { before: 80, after: 80 },
+      }));
 
-      const lines = doc.splitTextToSize(node.textContent.replace(/§§(.+?)§§/g, '$1'), TW);
-      for (const line of lines) {
-        guard(6);
-        doc.text(line, ML, y);
-        y += 5.8;
+    } else if (node.tagName === ‘P’) {
+      const runs = [];
+      for (const child of node.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) {
+          if (child.textContent) runs.push(new TextRun({ text: child.textContent }));
+        } else if (child.tagName === ‘STRONG’) {
+          runs.push(new TextRun({ text: child.textContent, bold: true }));
+        } else if (child.tagName === ‘MARK’) {
+          runs.push(new TextRun({ text: child.textContent }));
+        } else if (child.tagName === ‘BR’) {
+          runs.push(new TextRun({ break: 1 }));
+        }
       }
-      y += 1.5;
+      if (runs.length) children.push(new Paragraph({ children: runs, spacing: { after: 120 } }));
     }
   }
 
-  /* ── Signature ── */
-  y += 8;
-  guard(18);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...MUTED);
-  doc.text('Signature du thérapeute', PW - MR, y, { align: 'right' });
-  y += 7;
-  doc.setDrawColor(...BORDER);
-  doc.setLineWidth(0.3);
-  doc.line(PW - MR - 50, y, PW - MR, y);
-
-  /* ── Numéros de page ── */
-  const total = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= total; p++) {
-    doc.setPage(p);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(170, 175, 185);
-    doc.text(`${p} / ${total}`, PW / 2, PH - 12, { align: 'center' });
-  }
-
-  doc.save('compte-rendu-ergotherapie.pdf');
+  const doc  = new Document({ sections: [{ children }] });
+  const blob = await Packer.toBlob(doc);
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement(‘a’);
+  a.href     = url;
+  a.download = ‘compte-rendu-ergotherapie.docx’;
+  a.click();
+  URL.revokeObjectURL(url);
 }

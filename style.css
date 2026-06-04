@@ -58,7 +58,7 @@ body {
   letter-spacing: -0.01em;
 }
 
-.btn-pdf {
+.btn-word {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -74,10 +74,10 @@ body {
   white-space: nowrap;
 }
 
-.btn-pdf:hover  { background: var(--accent-dark); }
-.btn-pdf:active { transform: translateY(1px); }
+.btn-word:hover  { background: var(--accent-dark); }
+.btn-word:active { transform: translateY(1px); }
 
-.btn-pdf svg {
+.btn-word svg {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
@@ -255,6 +255,6 @@ mark.hl {
   .document   { padding: 2rem 1.25rem; }
   .topbar     { padding: 0 1rem; }
   .brand-name { display: none; }
-  .btn-pdf span { display: none; }
-  .btn-pdf    { padding: 0.5rem 0.75rem; }
+  .btn-word span { display: none; }
+  .btn-word    { padding: 0.5rem 0.75rem; }
 }
