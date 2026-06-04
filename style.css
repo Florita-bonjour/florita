@@ -221,6 +221,13 @@ body {
   font-style: italic;
 }
 
+mark.hl {
+  background: #fffde7;
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
 /* ── Footer ─────────────────────────────────── */
 .doc-footer {
   margin-top: 3rem;

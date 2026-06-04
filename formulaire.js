@@ -45,6 +45,7 @@ function esc(str) {
 document.getElementById('cr-form').addEventListener('submit', (e) => {
   e.preventDefault();
 
+  const trame       = document.getElementById('trame').value;
   const destination = document.getElementById('destination').value;
   const notes       = document.getElementById('notes').value.trim();
 
@@ -56,6 +57,7 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
   });
 
   const params = new URLSearchParams();
+  params.set('trame', trame);
   if (destination)     params.set('destination', destination);
   if (notes)           params.set('notes',        notes);
   if (measures.length) params.set('measures',     JSON.stringify(measures));

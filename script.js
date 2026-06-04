@@ -1,3 +1,7 @@
+import { TRAME_VAD_CONTENU, TRAME_TEL, TRAME_ACTION } from './trames.js';
+
+const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
+
 /* ── Date ──────────────────────────────────────────────────────────── */
 document.getElementById('doc-date').textContent = new Date().toLocaleDateString('fr-FR', {
   day: 'numeric', month: 'long', year: 'numeric'
@@ -15,19 +19,21 @@ function esc(str) {
 const params      = new URLSearchParams(window.location.search);
 const destination = params.get('destination') || '';
 const notes       = params.get('notes')       || '';
+const trameKey    = params.get('trame') || 'vad';
+const trame       = TRAMES[trameKey] ?? TRAME_VAD_CONTENU;
 let   measures    = [];
 try { measures = JSON.parse(params.get('measures') || '[]'); } catch (_) {}
 
 const hasData = destination || notes || measures.length;
 
 if (hasData) {
-  generateCR(destination, notes, measures);
+  generateCR(destination, notes, measures, trame);
 } else {
   document.getElementById('cr-editor').innerHTML =
     `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
 }
 
-async function generateCR(destination, notes, measures) {
+async function generateCR(destination, notes, measures, trame) {
   const editor = document.getElementById('cr-editor');
 
   editor.setAttribute('contenteditable', 'false');
@@ -55,7 +61,8 @@ async function generateCR(destination, notes, measures) {
     });
     userContent += '\n';
   }
-  userContent += 'Rédige un compte rendu structuré, clinique et professionnel. Utilise uniquement du texte courant (pas de markdown, pas de listes à puces). Chaque paragraphe thématique doit être séparé par une ligne vide. Ne génère pas de titre général ni d\'en-tête.';
+  if (trame) userContent += `\nComplète la trame suivante en renseignant chaque rubrique à partir des informations ci-dessus. Conserve exactement les titres et la structure. Si une information manque, écris À compléter par l'ergothérapeute.\n\nTRAME :\n${trame}`;
+  else       userContent += 'Rédige un compte rendu structuré, clinique et professionnel. Utilise uniquement du texte courant (pas de markdown, pas de listes à puces). Chaque paragraphe thématique doit être séparé par une ligne vide. Ne génère pas de titre général ni d\'en-tête.';
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -83,7 +90,9 @@ async function generateCR(destination, notes, measures) {
     const text = data.content?.[0]?.text || '';
 
     const paragraphs = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-    editor.innerHTML = paragraphs.map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
+    editor.innerHTML = paragraphs.map(p =>
+      `<p>${esc(p).replace(/\n/g, '<br>').replace(/§§(.+?)§§/g, '<mark class="hl">$1</mark>')}</p>`
+    ).join('');
 
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
@@ -184,7 +193,7 @@ function exportPDF() {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(...ACCENT);
-      doc.text(node.textContent.toUpperCase(), ML, y);
+      doc.text(node.textContent.replace(/§§(.+?)§§/g, '$1').toUpperCase(), ML, y);
       y += 6;
 
     } else if (node.tagName === 'P') {
@@ -193,7 +202,7 @@ function exportPDF() {
       doc.setFontSize(10);
       doc.setTextColor(...TEXT);
 
-      const lines = doc.splitTextToSize(node.textContent, TW);
+      const lines = doc.splitTextToSize(node.textContent.replace(/§§(.+?)§§/g, '$1'), TW);
       for (const line of lines) {
         guard(6);
         doc.text(line, ML, y);
