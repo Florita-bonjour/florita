@@ -186,7 +186,7 @@ async function exportWord() {
         } else if (child.tagName === 'STRONG') {
           runs.push(new TextRun({ text: child.textContent, bold: true }));
         } else if (child.tagName === 'MARK') {
-          runs.push(new TextRun({ text: child.textContent }));
+          runs.push(new TextRun({ text: child.textContent, highlight: 'yellow' }));
         } else if (child.tagName === 'BR') {
           runs.push(new TextRun({ break: 1 }));
         }
