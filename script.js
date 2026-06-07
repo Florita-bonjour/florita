@@ -55,6 +55,7 @@ let destination = '';
 let notes       = '';
 let trameKey    = 'vad';
 let measures    = [];
+let sexe        = '';
 
 const saved = localStorage.getItem('florita-cr-data');
 if (saved) {
@@ -64,6 +65,7 @@ if (saved) {
     notes       = data.notes || '';
     trameKey    = data.trame || 'vad';
     measures    = data.measures || [];
+    sexe        = data.sexe || '';
   } catch (_) {}
 }
 
@@ -87,8 +89,7 @@ async function generateCR(destination, notes, measures, trame) {
     const response = await fetch('/.netlify/functions/generate-cr', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ destination, notes, measures, trame }),
-    });
+      body: JSON.stringify({ destination, notes, measures, trame, sexe }),
 
     const data = await response.json();
 

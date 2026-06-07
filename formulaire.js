@@ -46,8 +46,9 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
     const value = row.querySelector('.m-value').value.trim();
     if (label || value) measures.push({ label, value });
   });
+  const sexe = document.getElementById('sexe').value;
   localStorage.setItem('florita-cr-data', JSON.stringify({
-    trame, destination, notes, measures
+    trame, destination, notes, measures, sexe
   }));
   window.location.href = 'index.html';
 });
