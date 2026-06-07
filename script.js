@@ -73,13 +73,13 @@ const trame   = TRAMES[trameKey] ?? TRAME_VAD_CONTENU;
 const hasData = destination || notes || measures.length;
 
 if (hasData) {
-  generateCR(destination, notes, measures, trame);
+  generateCR(destination, notes, measures, trame, sexe);
 } else {
   document.getElementById('cr-editor').innerHTML =
     `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
 }
 
-async function generateCR(destination, notes, measures, trame) {
+async function generateCR(destination, notes, measures, trame, sexe) {
   const editor = document.getElementById('cr-editor');
 
   editor.setAttribute('contenteditable', 'false');
@@ -90,6 +90,7 @@ async function generateCR(destination, notes, measures, trame) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ destination, notes, measures, trame, sexe }),
+    });
 
     const data = await response.json();
 
