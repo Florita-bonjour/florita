@@ -2,6 +2,9 @@ import { TRAME_VAD_CONTENU, TRAME_TEL, TRAME_ACTION } from './trames.js';
 
 const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
 
+const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co/functions/v1/generate-cr';
+const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
+
 /* ── Date ──────────────────────────────────────────────────────────── */
 document.getElementById('doc-date').textContent = new Date().toLocaleDateString('fr-FR', {
   day: 'numeric', month: 'long', year: 'numeric'
@@ -80,7 +83,7 @@ if (hasData) {
     `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
 }
 
-/* ── Génération du CR avec streaming ───────────────────────────────── */
+/* ── Génération du CR avec streaming via Supabase ──────────────────── */
 async function generateCR(destination, notes, measures, trame, sexe) {
   const editor = document.getElementById('cr-editor');
 
@@ -88,9 +91,13 @@ async function generateCR(destination, notes, measures, trame, sexe) {
   editor.innerHTML = `<p class="cr-placeholder" style="font-style:italic;opacity:.7;">Génération du compte rendu en cours…</p>`;
 
   try {
-    const response = await fetch('/.netlify/functions/generate-cr', {
+    const response = await fetch(SUPABASE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+      },
       body: JSON.stringify({ destination, notes, measures, trame, sexe }),
     });
 
