@@ -7,7 +7,7 @@ document.getElementById('doc-date').textContent = new Date().toLocaleDateString(
   day: 'numeric', month: 'long', year: 'numeric'
 });
 
-/* ── Injection depuis le formulaire (localStorage) ─────────────────── */
+/* ── Fonctions utilitaires ─────────────────────────────────────────── */
 function esc(str) {
   return str
     .replace(/&/g, '&amp;')
@@ -51,6 +51,7 @@ function mdToHTML(text) {
   return html.join('');
 }
 
+/* ── Lecture des données depuis localStorage ───────────────────────── */
 let destination = '';
 let notes       = '';
 let trameKey    = 'vad';
@@ -79,6 +80,7 @@ if (hasData) {
     `<p class="cr-placeholder">Le compte rendu généré apparaîtra ici. Ce champ est entièrement modifiable avant l'impression.</p>`;
 }
 
+/* ── Génération du CR avec streaming ───────────────────────────────── */
 async function generateCR(destination, notes, measures, trame, sexe) {
   const editor = document.getElementById('cr-editor');
 
@@ -92,13 +94,25 @@ async function generateCR(destination, notes, measures, trame, sexe) {
       body: JSON.stringify({ destination, notes, measures, trame, sexe }),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.error || `Erreur HTTP ${response.status}`);
+      let errorMsg = `Erreur HTTP ${response.status}`;
+      try {
+        const data = await response.json();
+        errorMsg = data.error || errorMsg;
+      } catch (_) {}
+      throw new Error(errorMsg);
     }
 
-    editor.innerHTML = mdToHTML(data.text || '');
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      fullText += decoder.decode(value, { stream: true });
+      editor.innerHTML = mdToHTML(fullText);
+    }
 
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
