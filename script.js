@@ -3,7 +3,7 @@ import { TRAME_VAD_CONTENU, TRAME_TEL, TRAME_ACTION } from './trames.js';
 const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
 
 const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co/functions/v1/generate-cr';
-const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwZmxlZ2Jyb3FlZmhidWNibnJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzkwNzcsImV4cCI6MjA5NjUxNTA3N30.GPHjO6xxZs7zhvpPgA5QJDdLi0wtDBIFk6MF9lsNApI';
 
 /* ── Date ──────────────────────────────────────────────────────────── */
 document.getElementById('doc-date').textContent = new Date().toLocaleDateString('fr-FR', {
