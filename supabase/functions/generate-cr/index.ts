@@ -63,7 +63,7 @@ Encadre avec §§ et §§, ex : §§À compléter par l'ergothérapeute§§. Ne 
 - Respecte la structure et les titres de la trame
 - Texte courant professionnel (pas de puces sauf si la trame l'impose)
 - Utilise ## pour les titres de section
-- Utilise **texte** pour les éléments importants
+- Ne jamais utiliser de gras dans le corps du texte - le gras est réservé aux titres de section uniquement
 - Utilise §§texte§§ pour les éléments à surligner (sections à compléter)
 - Ton factuel, clinique, sans formules de politesse superflues`;
 }

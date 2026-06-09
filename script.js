@@ -189,7 +189,7 @@ async function exportWord() {
     }
   }
 
-  const doc  = new Document({ sections: [{ children }] });
+  const doc  = new Document({ styles: { default: { document: { run: { font: "Calibri", size: 22 }, paragraph: { alignment: "both" } } } }, sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
