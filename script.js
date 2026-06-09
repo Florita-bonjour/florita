@@ -60,6 +60,8 @@ let notes       = '';
 let trameKey    = 'vad';
 let measures    = [];
 let sexe        = '';
+let dateVad     = '';
+let ville       = '';
 
 const saved = localStorage.getItem('florita-cr-data');
 if (saved) {
@@ -70,6 +72,8 @@ if (saved) {
     trameKey    = data.trame || 'vad';
     measures    = data.measures || [];
     sexe        = data.sexe || '';
+    dateVad     = data.dateVad || '';
+    ville       = data.ville || '';
   } catch (_) {}
 }
 
@@ -194,7 +198,7 @@ async function exportWord() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = 'compte-rendu-ergotherapie.docx';
+  a.download = (dateVad && ville) ? `${dateVad}-${ville}.docx` : 'compte-rendu-ergotherapie.docx';
   a.click();
   URL.revokeObjectURL(url);
 }

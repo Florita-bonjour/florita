@@ -47,8 +47,10 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
     if (label || value) measures.push({ label, value });
   });
   const sexe = document.getElementById('sexe').value;
+  const dateVad = document.getElementById('date-vad').value;
+  const ville = document.getElementById('ville').value.trim();
   localStorage.setItem('florita-cr-data', JSON.stringify({
-    trame, destination, notes, measures, sexe
+    trame, destination, notes, measures, sexe, dateVad, ville
   }));
   window.location.href = 'index.html';
 });

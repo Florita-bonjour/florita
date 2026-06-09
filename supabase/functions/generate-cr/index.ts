@@ -141,6 +141,7 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 8000,
+	temperature: 0.3,
         stream: true,
         system: buildSystemPrompt(destination),
         messages: [{ role: "user", content: userContent }],

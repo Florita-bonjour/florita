@@ -220,12 +220,20 @@
               <span class="section-title">Trame</span>
             </div>
             <div class="field">
-              <label for="trame">Type de compte rendu</label>
-              <select id="trame">
-                <option value="vad">VAD Bilan situationnel</option>
-                <option value="tel">Bilan téléphonique</option>
-                <option value="action">Action sociale Bilan domicile</option>
+              <label for="sexe">Sexe du patient (pour anonymisation)</label>
+              <select id="sexe">
+                <option value="">Non précisé</option>
+                <option value="homme">Homme</option>
+                <option value="femme">Femme</option>
               </select>
+            </div>
+            <div class="field">
+              <label for="date-vad">Date de la visite</label>
+              <input type="date" id="date-vad" />
+            </div>
+            <div class="field">
+              <label for="ville">Ville ou quartier (pour le nom du fichier)</label>
+              <input type="text" id="ville" placeholder="Ex : Niort, Belleville…" />
             </div>
           </div>
 
