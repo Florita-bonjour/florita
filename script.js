@@ -4,6 +4,7 @@ const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
 
 const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co/functions/v1/generate-cr';
 const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ── Date ──────────────────────────────────────────────────────────── */
 document.getElementById('doc-date').textContent = new Date().toLocaleDateString('fr-FR', {
@@ -123,7 +124,25 @@ async function generateCR(destination, notes, measures, trame, sexe) {
       fullText += decoder.decode(value, { stream: true });
       editor.innerHTML = mdToHTML(fullText);
     }
-
+// Sauvegarder le CR en base
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        await sb.from('generated_crs').insert({
+          user_id: session.user.id,
+          destination: destination,
+          trame_key: trameKey,
+          sexe: sexe,
+          date_vad: dateVad || null,
+          ville: ville || null,
+          notes: notes,
+          measures: measures,
+          generated_text: fullText
+        });
+      }
+    } catch (saveErr) {
+      console.log('CR non sauvegardé:', saveErr);
+    }
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
   } finally {
