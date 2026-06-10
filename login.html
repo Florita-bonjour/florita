@@ -125,8 +125,10 @@
           <div id="login-msg" class="auth-msg"></div>
         </form>
         <form id="form-register" class="auth-form" onsubmit="handleRegister(event)">
-          <label>Prénom et nom</label>
-          <input type="text" id="reg-name" placeholder="Pauline Dupont" required>
+          <label>Prénom</label>
+          <input type="text" id="reg-firstname" placeholder="Rose" required>
+          <label>Nom</label>
+          <input type="text" id="reg-lastname" placeholder="Deschamps" required>
           <label>Email professionnel</label>
           <input type="email" id="reg-email" placeholder="prenom@exemple.com" required>
           <label>Mot de passe</label>
@@ -188,7 +190,6 @@
       e.preventDefault();
       var msg = document.getElementById('login-msg');
       msg.className = 'auth-msg';
-      msg.style.display = 'none';
       var email = document.getElementById('login-email').value;
       var password = document.getElementById('login-password').value;
       sb.auth.signInWithPassword({ email: email, password: password }).then(function(result) {
@@ -211,15 +212,15 @@
       e.preventDefault();
       var msg = document.getElementById('reg-msg');
       msg.className = 'auth-msg';
-      msg.style.display = 'none';
-      var name = document.getElementById('reg-name').value;
+      var firstname = document.getElementById('reg-firstname').value;
+      var lastname = document.getElementById('reg-lastname').value;
       var email = document.getElementById('reg-email').value;
       var password = document.getElementById('reg-password').value;
       var type = document.getElementById('reg-type').value;
       sb.auth.signUp({
         email: email,
         password: password,
-        options: { data: { full_name: name, account_type: type } }
+        options: { data: { first_name: firstname, last_name: lastname, account_type: type } }
       }).then(function(result) {
         if (result.error) {
           if (result.error.status === 429) {
