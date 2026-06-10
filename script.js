@@ -4,7 +4,7 @@ const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
 
 const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co/functions/v1/generate-cr';
 const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = window.floritaSb;
 
 /* ── Date ──────────────────────────────────────────────────────────── */
 document.getElementById('doc-date').textContent = new Date().toLocaleDateString('fr-FR', {

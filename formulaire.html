@@ -322,7 +322,7 @@
   <script src="auth.js"></script>
 <script>
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      const sb = window.supabase.createClient('https://ipflegbroqefhbucbnrv.supabase.co', 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl');
+      const sb = window.floritaSb;
       await sb.auth.signOut();
       window.location.href = 'login.html';
     });
