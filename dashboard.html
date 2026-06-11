@@ -234,9 +234,12 @@
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href='login.html'; return; }
 
-    const email = session.user.email || '';
-    const prenom = email.split('@')[0].split('.')[0];
-    document.getElementById('salutation').textContent = 'Bonjour ' + prenom.charAt(0).toUpperCase() + prenom.slice(1);
+    // Forcer le rechargement des métadonnées depuis le serveur
+    const { data: refreshed } = await sb.auth.refreshSession();
+    const user = refreshed?.session?.user || session.user;
+    const meta = user.user_metadata || {};
+    const prenom = meta.first_name || meta.full_name || '';
+    document.getElementById('salutation').textContent = prenom ? 'Bonjour ' + prenom : 'Bonjour';
 
     const { data: crs, error } = await sb
       .from('generated_crs')
@@ -254,8 +257,7 @@
 
     document.getElementById('cpt-mois').textContent = ceMois;
     document.getElementById('cpt-mois-quota').textContent = ceMois;
-    const hEco = ceMois * 4;
-    document.getElementById('cpt-mois-sub').textContent = hEco > 0 ? '~'+hEco+'h de rédaction économisées' : 'Aucun CR ce mois';
+    document.getElementById('cpt-mois-sub').textContent = total > 0 ? total + ' CR au total depuis l\'inscription' : 'Aucun CR ce mois';
 
     const pct = Math.min(Math.round((ceMois/QUOTA)*100), 100);
     document.getElementById('quota-fill').style.width = pct+'%';
