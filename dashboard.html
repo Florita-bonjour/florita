@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Florita — Tableau de bord</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAFAF8;
+      --rose: #D4537E;
+      --violet: #6B4C9A;
+      --or: #F5C542;
+      --texte: #2C2C2A;
+      --card-rose-bg: #FBEAF0;
+      --card-rose-txt: #993556;
+      --card-violet-bg: #EEEDFE;
+      --card-violet-txt: #534AB7;
+      --card-vert-bg: #E1F5EE;
+      --card-vert-txt: #0F6E56;
+      --sidebar-w: 236px;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--bg);
+      color: var(--texte);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(180deg, #6B4C9A 0%, #D4537E 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0 24px;
+      position: fixed;
+      top: 0; left: 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px 32px;
+      text-decoration: none;
+    }
+
+    /* Arc-en-ciel SVG inline */
+    .sidebar-logo svg { width: 38px; height: 24px; flex-shrink: 0; }
+
+    .sidebar-logo span {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .sidebar-logo span em {
+      font-style: normal;
+      color: var(--or);
+    }
+
+    nav { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 0 12px; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.78);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,0.18); color: #fff; }
+
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.85; }
+
+    .sidebar-deconnexion {
+      margin: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: background 0.15s, color 0.15s;
+      width: calc(100% - 24px);
+    }
+
+    .sidebar-deconnexion:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .sidebar-deconnexion svg { width: 18px; height: 18px; }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 960px;
+    }
+
+    .main-header { margin-bottom: 36px; }
+
+    .main-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--texte);
+      margin-bottom: 4px;
+    }
+
+    .main-header p {
+      font-size: 14px;
+      color: #777;
+      font-weight: 500;
+    }
+
+    /* ── BOUTON NOUVEAU CR ── */
+    .btn-nouveau-cr {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--or);
+      color: #2C2C2A;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 40px;
+      box-shadow: 0 2px 12px rgba(245,197,66,0.35);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .btn-nouveau-cr:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 18px rgba(245,197,66,0.45);
+    }
+
+    .btn-nouveau-cr svg { width: 20px; height: 20px; }
+
+    /* ── COMPTEURS ── */
+    .compteurs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .compteur-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px 24px;
+      border: 1px solid #ede9f5;
+    }
+
+    .compteur-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .compteur-val {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .compteur-val.violet { color: var(--violet); }
+    .compteur-val.rose   { color: var(--rose); }
+    .compteur-val.or     { color: #c89b0a; }
+
+    .compteur-sub {
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    /* ── SECTION TITRES ── */
+    .section-titre {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--texte);
+      margin-bottom: 14px;
+    }
+
+    /* ── DERNIERS CR ── */
+    .cr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+
+    .cr-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 22px;
+      border: 1px solid #ede9f5;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .cr-card-info { flex: 1; }
+
+    .cr-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .cr-date {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--texte);
+    }
+
+    .cr-ref {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    .badge-violet { background: var(--card-violet-bg); color: var(--card-violet-txt); }
+    .badge-rose   { background: var(--card-rose-bg);   color: var(--card-rose-txt); }
+    .badge-vert   { background: var(--card-vert-bg);   color: var(--card-vert-txt); }
+
+    .cr-apercu {
+      font-size: 13px;
+      color: #888;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 480px;
+    }
+
+    .cr-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .btn-sm {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-sm:hover { opacity: 0.85; }
+    .btn-sm-primary { background: var(--or); color: #2C2C2A; }
+    .btn-sm-ghost   { background: transparent; color: var(--rose); border: 1.5px solid var(--rose); }
+
+    /* Lien "Voir tout l'historique" */
+    .lien-historique {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--violet);
+      text-decoration: none;
+      margin-top: -24px;
+      margin-bottom: 40px;
+    }
+
+    .lien-historique:hover { text-decoration: underline; }
+
+    /* ── ÉTAT VIDE ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px dashed #d9d4ef;
+    }
+
+    .empty-state svg { width: 48px; height: 48px; margin-bottom: 14px; opacity: 0.35; }
+    .empty-state p { font-size: 14px; color: #aaa; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <a href="dashboard.html" class="sidebar-logo">
+      <!-- Logo arc-en-ciel Florita -->
+      <svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 28 C4 14 44 14 44 28" stroke="#D4537E" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+        <path d="M9 28 C9 17 39 17 39 28" stroke="#c0548a" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M14 28 C14 20 34 20 34 28" stroke="#a451a0" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <path d="M19 28 C19 23 29 23 29 28" stroke="#8B4BAF" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M23 28 C23 25.5 25 25.5 25 28" stroke="#6B4C9A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span>florita<em>.</em></span>
+    </a>
+
+    <nav>
+      <a href="dashboard.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Tableau de bord
+      </a>
+      <a href="formulaire.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Nouveau CR
+      </a>
+      <a href="historique.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Historique
+      </a>
+    </nav>
+
+    <button class="sidebar-deconnexion" id="btn-deconnexion">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Déconnexion
+    </button>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <header class="main-header">
+      <h1>Bonjour 👋</h1>
+      <p id="sous-titre">Prête pour votre prochaine visite ?</p>
+    </header>
+
+    <a href="formulaire.html" class="btn-nouveau-cr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Nouveau compte rendu
+    </a>
+
+    <!-- Compteurs -->
+    <div class="compteurs">
+      <div class="compteur-card">
+        <div class="compteur-label">Ce mois-ci</div>
+        <div class="compteur-val violet" id="cpt-mois">—</div>
+        <div class="compteur-sub">comptes rendus générés</div>
+      </div>
+      <div class="compteur-card">
+        <div class="compteur-label">Total</div>
+        <div class="compteur-val rose" id="cpt-total">—</div>
+        <div class="compteur-sub">depuis votre inscription</div>
+      </div>
+      <div class="compteur-card">
+        <div class="compteur-label">Temps estimé récupéré</div>
+        <div class="compteur-val or" id="cpt-temps">—</div>
+        <div class="compteur-sub">heures (base 4h / CR)</div>
+      </div>
+    </div>
+
+    <!-- Derniers CR -->
+    <div class="section-titre">Derniers comptes rendus</div>
+    <div class="cr-list" id="cr-list">
+      <!-- injecté par JS -->
+    </div>
+    <a href="historique.html" class="lien-historique" id="lien-historique" style="display:none;">
+      Voir tout l'historique →
+    </a>
+
+  </main>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co';
+    const SUPABASE_ANON_KEY = 'REMPLACER_PAR_CLE_ANON';
+
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const BADGE_MAP = {
+      'ANAH':                      { label: 'ANAH',                      cls: 'badge-violet' },
+      'MDPH':                      { label: 'MDPH',                      cls: 'badge-violet' },
+      'Caisse de retraite':        { label: 'Caisse de retraite',        cls: 'badge-rose'   },
+      'Mutuelle':                  { label: 'Mutuelle',                  cls: 'badge-rose'   },
+      'Assurance dommages corporels':{ label: 'Assurance dommages corporels', cls: 'badge-rose' },
+      'Protection juridique':      { label: 'Protection juridique',      cls: 'badge-rose'   },
+      'Employeur-Prévoyance':      { label: 'Employeur-Prévoyance',      cls: 'badge-violet' },
+      'Retour hospitalisation':    { label: 'Retour hospitalisation',    cls: 'badge-vert'   },
+      'Autre':                     { label: 'Autre',                     cls: 'badge-violet' },
+    };
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function badge(destination) {
+      const b = BADGE_MAP[destination] || { label: destination, cls: 'badge-violet' };
+      return `<span class="badge ${b.cls}">${b.label}</span>`;
+    }
+
+    function apercu(contenu) {
+      if (!contenu) return '';
+      return contenu.replace(/\[BROUILLON[^\]]*\]/g, '').replace(/\n/g, ' ').trim().slice(0, 120) + '…';
+    }
+
+    async function init() {
+      // Vérification session
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+
+      const userId = session.user.id;
+      const email  = session.user.email || '';
+      document.getElementById('sous-titre').textContent =
+        email ? `Connecté(e) en tant que ${email}` : 'Prête pour votre prochaine visite ?';
+
+      // Chargement des CR
+      const { data: crs, error } = await sb
+        .from('generated_crs')
+        .select('id, created_at, destination, ref_dossier, content')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) { console.error(error); return; }
+
+      // Compteurs
+      const total = crs.length;
+      const now   = new Date();
+      const mois  = crs.filter(c => {
+        const d = new Date(c.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).length;
+
+      document.getElementById('cpt-total').textContent = total;
+      document.getElementById('cpt-mois').textContent  = mois;
+      document.getElementById('cpt-temps').textContent = total > 0 ? (total * 4) + 'h' : '—';
+
+      // Liste derniers CR (max 3)
+      const list = document.getElementById('cr-list');
+      if (total === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6B4C9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+            <p>Aucun compte rendu pour l'instant.<br>Créez votre premier CR dès maintenant.</p>
+          </div>`;
+        return;
+      }
+
+      const recents = crs.slice(0, 3);
+      list.innerHTML = recents.map(cr => `
+        <div class="cr-card">
+          <div class="cr-card-info">
+            <div class="cr-card-meta">
+              <span class="cr-date">${formatDate(cr.created_at)}</span>
+              <span class="cr-ref">${cr.ref_dossier || ''}</span>
+              ${badge(cr.destination)}
+            </div>
+            <div class="cr-apercu">${apercu(cr.content)}</div>
+          </div>
+          <div class="cr-actions">
+            <a href="historique.html" class="btn-sm btn-sm-primary">Voir</a>
+          </div>
+        </div>
+      `).join('');
+
+      if (total > 3) {
+        document.getElementById('lien-historique').style.display = 'inline-flex';
+      }
+
+      // Déconnexion
+      document.getElementById('btn-deconnexion').addEventListener('click', async () => {
+        await sb.auth.signOut();
+        window.location.href = 'login.html';
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

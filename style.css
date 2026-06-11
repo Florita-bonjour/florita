@@ -5,12 +5,14 @@
 }
 
 :root {
-  --accent:      #1a4f7a;
-  --accent-dark: #133c5d;
-  --text:        #1c2b3a;
+  --accent:      #6B4C9A;
+  --accent-dark: #5A3D87;
+  --rose:        #D4537E;
+  --text:        #2C2C2A;
   --muted:       #637080;
-  --border:      #d0d7de;
-  --bg:          #edf0f4;
+  --border:      #D0D7DE;
+  --border-light:#E8E4F0;
+  --bg:          #FAFAF8;
   --surface:     #ffffff;
   --shadow:      0 2px 18px rgba(0, 0, 0, 0.09);
 }
@@ -18,89 +20,30 @@
 html { font-size: 16px; }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Quicksand', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
 }
 
-/* ── Topbar ─────────────────────────────────── */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 58px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: var(--accent);
-}
-
-.brand-icon {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-
-.brand-name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.btn-word {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.5rem 1.25rem;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.88rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
-  white-space: nowrap;
-}
-
-.btn-word:hover  { background: var(--accent-dark); }
-.btn-word:active { transform: translateY(1px); }
-
-.btn-word svg {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-}
-
-/* ── Workspace ──────────────────────────────── */
+/* ── Workspace ── */
 .workspace {
   display: flex;
   justify-content: center;
   padding: 2.5rem 1rem 4rem;
 }
 
-/* ── Document (paper card) ──────────────────── */
+/* ── Document (paper card) ── */
 .document {
   width: 100%;
   max-width: 800px;
   background: var(--surface);
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: var(--shadow);
   padding: 3.5rem 4rem;
 }
 
-/* ── Doc meta header ────────────────────────── */
+/* ── Doc meta header ── */
 .doc-meta {
   display: flex;
   justify-content: space-between;
@@ -125,23 +68,23 @@ body {
   color: var(--muted);
 }
 
-/* ── Separator ──────────────────────────────── */
+/* ── Separator ── */
 .separator {
   height: 2px;
-  background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
-  opacity: 0.22;
+  background: linear-gradient(90deg, var(--rose) 0%, var(--accent) 60%, transparent 100%);
+  opacity: 0.3;
   margin-bottom: 1.5rem;
   border-radius: 1px;
 }
 
-/* ── Patient block ──────────────────────────── */
+/* ── Patient block ── */
 .patient-block {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 2.5rem;
-  background: #f6f8fa;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  background: #f6f4fb;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
   padding: 0.9rem 1.25rem;
   margin-bottom: 2rem;
 }
@@ -174,7 +117,7 @@ body {
   box-shadow: 0 0 0 2px var(--accent);
 }
 
-/* ── CR title ───────────────────────────────── */
+/* ── CR title ── */
 .doc-title {
   font-size: 0.9rem;
   font-weight: 700;
@@ -186,7 +129,7 @@ body {
   margin-bottom: 1.6rem;
 }
 
-/* ── Main editor ────────────────────────────── */
+/* ── Main editor ── */
 .cr-editor {
   min-height: 480px;
   font-size: 0.95rem;
@@ -204,17 +147,10 @@ body {
   margin: 1.6rem 0 0.55rem;
 }
 
-.cr-editor h3:first-child {
-  margin-top: 0;
-}
+.cr-editor h3:first-child { margin-top: 0; }
 
-.cr-editor p {
-  margin-bottom: 0.7rem;
-}
-
-.cr-editor p:last-child {
-  margin-bottom: 0;
-}
+.cr-editor p { margin-bottom: 0.7rem; }
+.cr-editor p:last-child { margin-bottom: 0; }
 
 .cr-placeholder {
   color: var(--muted);
@@ -228,7 +164,28 @@ mark.hl {
   border-radius: 2px;
 }
 
-/* ── Footer ─────────────────────────────────── */
+/* ── Bouton Word (utilisé dans index.html) ── */
+.btn-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.25rem;
+  background: linear-gradient(135deg, #D4537E 0%, #6B4C9A 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.btn-word:hover  { opacity: 0.88; }
+.btn-word:active { transform: translateY(1px); }
+.btn-word svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ── Footer ── */
 .doc-footer {
   margin-top: 3rem;
   padding-top: 1.5rem;
@@ -239,22 +196,12 @@ mark.hl {
   gap: 0.6rem;
 }
 
-.signature-label {
-  font-size: 0.78rem;
-  color: var(--muted);
-}
+.signature-label { font-size: 0.78rem; color: var(--muted); }
+.signature-line  { width: 160px; height: 1px; background: var(--border); }
 
-.signature-line {
-  width: 160px;
-  height: 1px;
-  background: var(--border);
-}
-
-/* ── Responsive ─────────────────────────────── */
+/* ── Responsive ── */
 @media (max-width: 680px) {
   .document   { padding: 2rem 1.25rem; }
-  .topbar     { padding: 0 1rem; }
-  .brand-name { display: none; }
   .btn-word span { display: none; }
   .btn-word    { padding: 0.5rem 0.75rem; }
 }
