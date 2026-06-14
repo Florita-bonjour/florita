@@ -37,11 +37,9 @@ function esc(str) {
 /* ── Génération du CR et redirection ── */
 document.getElementById('cr-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const trameSelect = document.getElementById('trame');
-  const trameVal    = trameSelect.value;
-  const isDefault   = ['vad', 'tel', 'action'].includes(trameVal);
-  const trameKey    = isDefault ? trameVal : 'custom';
-  const trameContent = isDefault ? null : (trameSelect.options[trameSelect.selectedIndex].dataset.content || '');
+  const trameSelect  = document.getElementById('trame');
+  const selectedOpt  = trameSelect.options[trameSelect.selectedIndex];
+  const trameContent = selectedOpt ? (selectedOpt.dataset.content || '') : '';
 
   const destination = document.getElementById('destination').value;
   const notes       = document.getElementById('notes').value.trim();
@@ -55,27 +53,37 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
   const dateVad = document.getElementById('date-vad').value;
   const ville   = document.getElementById('ville').value.trim();
   localStorage.setItem('florita-cr-data', JSON.stringify({
-    trame: trameKey, trame_content: trameContent,
+    trame: 'custom', trame_content: trameContent,
     destination, notes, measures, sexe, dateVad, ville
   }));
   window.location.href = 'index.html';
 });
 
-/* ── Chargement des trames personnalisées ── */
+/* ── Chargement des trames depuis Supabase ── */
 (async function () {
-  const sb = window.floritaSb;
+  const sb        = window.floritaSb;
+  const select    = document.getElementById('trame');
+  const noMsg     = document.getElementById('no-trames-msg');
+  const submitBtn = document.querySelector('.btn-generate');
   if (!sb) return;
+
   const { data } = await sb.from('trames').select('id, name, content').order('created_at', { ascending: true });
-  if (!data || !data.length) return;
-  const select = document.getElementById('trame');
-  const group  = document.createElement('optgroup');
-  group.label  = 'Mes trames';
+
+  select.innerHTML = '';
+
+  if (!data || !data.length) {
+    select.style.display = 'none';
+    noMsg.style.display  = 'block';
+    if (submitBtn) submitBtn.disabled = true;
+    return;
+  }
+
   data.forEach(t => {
-    const opt         = document.createElement('option');
-    opt.value         = t.id;
-    opt.textContent   = t.name;
+    const opt           = document.createElement('option');
+    opt.value           = t.id;
+    opt.textContent     = t.name;
     opt.dataset.content = t.content;
-    group.appendChild(opt);
+    select.appendChild(opt);
   });
-  select.appendChild(group);
+  select.disabled = false;
 })();
