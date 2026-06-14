@@ -37,7 +37,12 @@ function esc(str) {
 /* ── Génération du CR et redirection ── */
 document.getElementById('cr-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const trame       = document.getElementById('trame').value;
+  const trameSelect = document.getElementById('trame');
+  const trameVal    = trameSelect.value;
+  const isDefault   = ['vad', 'tel', 'action'].includes(trameVal);
+  const trameKey    = isDefault ? trameVal : 'custom';
+  const trameContent = isDefault ? null : (trameSelect.options[trameSelect.selectedIndex].dataset.content || '');
+
   const destination = document.getElementById('destination').value;
   const notes       = document.getElementById('notes').value.trim();
   const measures = [];
@@ -46,11 +51,31 @@ document.getElementById('cr-form').addEventListener('submit', (e) => {
     const value = row.querySelector('.m-value').value.trim();
     if (label || value) measures.push({ label, value });
   });
-  const sexe = document.getElementById('sexe').value;
+  const sexe    = document.getElementById('sexe').value;
   const dateVad = document.getElementById('date-vad').value;
-  const ville = document.getElementById('ville').value.trim();
+  const ville   = document.getElementById('ville').value.trim();
   localStorage.setItem('florita-cr-data', JSON.stringify({
-    trame, destination, notes, measures, sexe, dateVad, ville
+    trame: trameKey, trame_content: trameContent,
+    destination, notes, measures, sexe, dateVad, ville
   }));
   window.location.href = 'index.html';
 });
+
+/* ── Chargement des trames personnalisées ── */
+(async function () {
+  const sb = window.floritaSb;
+  if (!sb) return;
+  const { data } = await sb.from('trames').select('id, name, content').order('created_at', { ascending: true });
+  if (!data || !data.length) return;
+  const select = document.getElementById('trame');
+  const group  = document.createElement('optgroup');
+  group.label  = 'Mes trames';
+  data.forEach(t => {
+    const opt         = document.createElement('option');
+    opt.value         = t.id;
+    opt.textContent   = t.name;
+    opt.dataset.content = t.content;
+    group.appendChild(opt);
+  });
+  select.appendChild(group);
+})();

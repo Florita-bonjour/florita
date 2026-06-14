@@ -56,29 +56,31 @@ function mdToHTML(text) {
 }
 
 /* ── Lecture des données depuis localStorage ───────────────────────── */
-let destination = '';
-let notes       = '';
-let trameKey    = 'vad';
-let measures    = [];
-let sexe        = '';
-let dateVad     = '';
-let ville       = '';
+let destination  = '';
+let notes        = '';
+let trameKey     = 'vad';
+let trameContent = null;
+let measures     = [];
+let sexe         = '';
+let dateVad      = '';
+let ville        = '';
 
 const saved = localStorage.getItem('florita-cr-data');
 if (saved) {
   try {
-    const data = JSON.parse(saved);
-    destination = data.destination || '';
-    notes       = data.notes || '';
-    trameKey    = data.trame || 'vad';
-    measures    = data.measures || [];
-    sexe        = data.sexe || '';
-    dateVad     = data.dateVad || '';
-    ville       = data.ville || '';
+    const data   = JSON.parse(saved);
+    destination  = data.destination || '';
+    notes        = data.notes || '';
+    trameKey     = data.trame || 'vad';
+    trameContent = (data.trame === 'custom') ? (data.trame_content || '') : null;
+    measures     = data.measures || [];
+    sexe         = data.sexe || '';
+    dateVad      = data.dateVad || '';
+    ville        = data.ville || '';
   } catch (_) {}
 }
 
-const trame   = TRAMES[trameKey] ?? TRAME_VAD_CONTENU;
+const trame = (trameContent !== null) ? trameContent : (TRAMES[trameKey] ?? TRAME_VAD_CONTENU);
 const hasData = destination || notes || measures.length;
 
 if (hasData) {

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Éditeur de trame — Florita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FAFAF8; --violet: #6B4C9A; --violet-dark: #5A3D87;
+      --rose: #D4537E; --text: #2C2C2A; --muted: #637080;
+      --border: #D0D7DE; --border-light: #E8E4F0; --surface: #ffffff;
+    }
+    body { font-family: 'Quicksand', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: linear-gradient(160deg, #6B4C9A 0%, #D4537E 100%);
+      color: #fff; padding: 1.8rem 1.2rem;
+      display: flex; flex-direction: column;
+      position: sticky; top: 0; height: 100vh;
+    }
+    .sidebar-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 2.4rem; text-decoration: none; }
+    .sidebar-logo .name { font-size: 1.6rem; font-weight: 700; color: #fff; }
+    .sidebar-logo .name span { color: #F5C542; }
+    .nav { display: flex; flex-direction: column; gap: 4px; }
+    .nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.7rem 0.85rem; border-radius: 8px;
+      color: rgba(255,255,255,0.82); text-decoration: none;
+      font-size: 0.92rem; font-weight: 600; transition: background 0.15s, color 0.15s;
+    }
+    .nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav a.active { background: rgba(255,255,255,0.18); color: #fff; }
+    .nav a svg { flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; }
+    .logout-btn {
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      padding: 0.7rem 0.85rem; border-radius: 8px;
+      background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16);
+      color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .workspace { flex: 1; display: flex; justify-content: center; padding: 2.5rem 1rem 4rem; }
+    .document {
+      width: 100%; max-width: 860px;
+      background: var(--surface); border-radius: 8px;
+      box-shadow: 0 2px 18px rgba(0,0,0,0.09);
+      padding: 3rem 3.5rem;
+      display: flex; flex-direction: column;
+    }
+
+    .editor-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; margin-bottom: 2rem;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .editor-title {
+      font-size: 0.9rem; font-weight: 700; color: var(--violet);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .editor-actions { display: flex; gap: 8px; align-items: center; }
+
+    .btn-cancel {
+      display: inline-flex; align-items: center;
+      font-family: inherit; font-size: 0.88rem; font-weight: 600;
+      padding: 0.5rem 1.1rem; border-radius: 7px;
+      border: 1px solid var(--border); background: #fff; color: var(--muted);
+      text-decoration: none; transition: border-color 0.12s, color 0.12s;
+    }
+    .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-save {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: inherit; font-size: 0.88rem; font-weight: 700;
+      padding: 0.5rem 1.3rem; border-radius: 7px;
+      background: linear-gradient(135deg, #D4537E 0%, #6B4C9A 100%);
+      color: #fff; border: none; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-save:hover { opacity: 0.88; }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.2rem; }
+    label { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+
+    input[type="text"] {
+      width: 100%; padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 6px;
+      font-family: inherit; font-size: 0.95rem; color: var(--text);
+      background: #fff; outline: none; transition: border-color 0.12s, box-shadow 0.12s;
+    }
+    input[type="text"]:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(107,76,154,0.12); }
+
+    .trame-textarea {
+      width: 100%; min-height: 460px; resize: vertical;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid var(--border); border-radius: 6px;
+      font-family: 'Courier New', monospace; font-size: 0.84rem;
+      line-height: 1.7; color: var(--text); background: #fff;
+      outline: none; transition: border-color 0.12s, box-shadow 0.12s;
+    }
+    .trame-textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(107,76,154,0.12); }
+
+    @media (max-width: 820px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; flex-direction: row; align-items: center; padding: 1rem 1.2rem; gap: 1rem; }
+      .sidebar-logo { margin-bottom: 0; }
+      .nav { flex-direction: row; flex: 1; justify-content: center; gap: 2px; }
+      .nav a span { display: none; }
+      .sidebar-bottom { margin-top: 0; margin-left: auto; }
+      .logout-btn span { display: none; }
+      .workspace { padding: 1.5rem 1rem 3rem; }
+      .document { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-logo">
+        <svg width="40" height="25" viewBox="0 0 48 30" aria-hidden="true">
+          <path d="M2,28 A22,22 0 0,1 46,28" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M7,28 A17,17 0 0,1 41,28" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M12,28 A12,12 0 0,1 36,28" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M17,28 A7,7 0 0,1 31,28" fill="none" stroke="rgba(255,255,255,0.38)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M22,28 A2,2 0 0,1 26,28" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="name">florita<span>.</span></div>
+      </a>
+      <nav class="nav">
+        <a href="dashboard.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Tableau de bord</span>
+        </a>
+        <a href="formulaire.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Nouveau CR</span>
+        </a>
+        <a href="historique.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          <span>Historique</span>
+        </a>
+        <a href="trames.html" class="active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Mes trames</span>
+        </a>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="logout-btn" id="logout">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <div class="document">
+        <div class="editor-head">
+          <h2 class="editor-title" id="page-title">Nouvelle trame</h2>
+          <div class="editor-actions">
+            <a href="trames.html" class="btn-cancel">Annuler</a>
+            <button id="btn-save" class="btn-save">Enregistrer</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="trame-name">Nom de la trame</label>
+          <input type="text" id="trame-name" placeholder="Ex : VAD MDPH, Bilan Préconisations…" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="trame-content">Contenu de la trame</label>
+          <textarea id="trame-content" class="trame-textarea" placeholder="Collez ou rédigez ici la structure de votre trame…" spellcheck="false"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+
+    document.getElementById('logout').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    const urlId = new URLSearchParams(location.search).get('id');
+    const nameEl    = document.getElementById('trame-name');
+    const contentEl = document.getElementById('trame-content');
+    const saveBtn   = document.getElementById('btn-save');
+    const titleEl   = document.getElementById('page-title');
+
+    if (urlId) {
+      titleEl.textContent = 'Modifier la trame';
+      const { data, error } = await sb.from('trames').select('name, content').eq('id', urlId).single();
+      if (error || !data) {
+        titleEl.textContent = 'Trame introuvable';
+        saveBtn.disabled = true;
+      } else {
+        nameEl.value    = data.name;
+        contentEl.value = data.content;
+      }
+    }
+
+    const imported = sessionStorage.getItem('florita-trame-import');
+    if (imported && !urlId) {
+      try {
+        const { name, content } = JSON.parse(imported);
+        nameEl.value    = name;
+        contentEl.value = content;
+        sessionStorage.removeItem('florita-trame-import');
+      } catch (_) {}
+    }
+
+    saveBtn.addEventListener('click', async () => {
+      const name    = nameEl.value.trim();
+      const content = contentEl.value.trim();
+      if (!name)    { nameEl.focus();    return; }
+      if (!content) { contentEl.focus(); return; }
+
+      saveBtn.disabled    = true;
+      saveBtn.textContent = 'Enregistrement…';
+
+      let error;
+      if (urlId) {
+        ({ error } = await sb.from('trames').update({ name, content }).eq('id', urlId));
+      } else {
+        ({ error } = await sb.from('trames').insert({ user_id: session.user.id, name, content }));
+      }
+
+      if (error) {
+        saveBtn.disabled    = false;
+        saveBtn.textContent = 'Enregistrer';
+        alert('Erreur : ' + error.message);
+      } else {
+        window.location.href = 'trames.html';
+      }
+    });
+  </script>
+</body>
+</html>
