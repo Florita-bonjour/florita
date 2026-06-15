@@ -1,7 +1,3 @@
-import { TRAME_VAD_CONTENU, TRAME_TEL, TRAME_ACTION } from './trames.js';
-
-const TRAMES = { vad: TRAME_VAD_CONTENU, tel: TRAME_TEL, action: TRAME_ACTION };
-
 const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co/functions/v1/generate-cr';
 const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
 const sb = window.floritaSb;
@@ -58,8 +54,7 @@ function mdToHTML(text) {
 /* ── Lecture des données depuis localStorage ───────────────────────── */
 let destination  = '';
 let notes        = '';
-let trameKey     = 'vad';
-let trameContent = null;
+let trameContent = '';
 let measures     = [];
 let sexe         = '';
 let dateVad      = '';
@@ -71,8 +66,7 @@ if (saved) {
     const data   = JSON.parse(saved);
     destination  = data.destination || '';
     notes        = data.notes || '';
-    trameKey     = data.trame || 'vad';
-    trameContent = (data.trame === 'custom') ? (data.trame_content || '') : null;
+    trameContent = data.trame_content || '';
     measures     = data.measures || [];
     sexe         = data.sexe || '';
     dateVad      = data.dateVad || '';
@@ -80,7 +74,7 @@ if (saved) {
   } catch (_) {}
 }
 
-const trame = (trameContent !== null) ? trameContent : (TRAMES[trameKey] ?? TRAME_VAD_CONTENU);
+const trame = trameContent;
 const hasData = destination || notes || measures.length;
 
 if (hasData) {
