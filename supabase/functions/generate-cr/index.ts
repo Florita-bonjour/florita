@@ -50,19 +50,24 @@ Place chaque valeur des mesures dans la section pertinente. Ne déduis jamais un
 5. ARGUMENTE LE CHOIX DES PRÉCONISATIONS
 Si la préconisation n'est pas la moins coûteuse, justifier cliniquement pourquoi la solution moins chère est inadaptée.
 
-6. CONCLUSION
+6. AIDES TECHNIQUES ET AMÉNAGEMENT DU LOGEMENT
+Ces sections ne doivent jamais être remplies par inférence ou déduction.
+- Si l'ergothérapeute n'a pas explicitement listé des préconisations dans les données fournies : laisser ces sections entièrement sous la forme §§À compléter par l'ergothérapeute§§. Ne pas en inventer, même si les observations cliniques pourraient les suggérer.
+- Si des préconisations sont explicitement listées : rédiger uniquement la justification clinique de chaque élément mentionné. Ne jamais ajouter d'aides techniques ou d'aménagements supplémentaires qui n'auraient pas été cités par l'ergothérapeute.
+
+7. CONCLUSION
 ${conclusionRule}
 
-7. GÉNÈRE UN BROUILLON
+8. GÉNÈRE UN BROUILLON
 Commence par : [BROUILLON — document généré avec assistance IA. À relire, amender et valider par l'ergothérapeute avant tout envoi. Conformément aux recommandations ANFE avril 2026.]
 
-8. ANONYMISATION TOTALE
+9. ANONYMISATION TOTALE
 Si des prénoms, noms ou adresses apparaissent dans les notes brutes, remplace-les par "Monsieur" ou "Madame" selon le sexe indiqué, et utilise "il" ou "elle" dans le texte. N'invente aucune information personnelle.
 
-9. SECTIONS SANS INFORMATION
+10. SECTIONS SANS INFORMATION
 Encadre avec §§ et §§, ex : §§À compléter par l'ergothérapeute§§. Ne génère pas de contenu fictif.
 
-10. FORMAT DE SORTIE
+11. FORMAT DE SORTIE
 - Respecte la structure et les titres de la trame
 - Texte courant professionnel (pas de puces sauf si la trame l'impose)
 - Utilise ## pour les titres de section
