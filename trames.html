@@ -87,11 +87,6 @@
     .trame-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
     .trame-nom { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
 
-    .badge-defaut {
-      font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
-      background: #E1F5EE; color: #0F6E56; white-space: nowrap; flex-shrink: 0;
-    }
-
     .trame-desc { font-size: 0.86rem; color: var(--grey); line-height: 1.5; }
 
     .trame-actions { display: flex; gap: 8px; margin-top: 0.3rem; flex-wrap: wrap; }
@@ -222,8 +217,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 <script type="module">
-  import { TRAME_VAD_CONTENU, TRAME_TEL, TRAME_ACTION } from './trames.js';
-
   const SUPABASE_URL = 'https://ipflegbroqefhbucbnrv.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -236,12 +229,6 @@
     window.location.href = 'login.html';
   });
 
-  const DEFAULTS = [
-    { key: 'vad',    name: 'VAD Bilan situationnel',        desc: 'Trame complète pour visite à domicile. Contexte assurance dommages corporels IMA/MAIF.',                  content: TRAME_VAD_CONTENU },
-    { key: 'tel',    name: 'Bilan téléphonique',            desc: 'Compte rendu sans visite physique. Échange téléphonique, logement, AVQ, préconisations.',                  content: TRAME_TEL },
-    { key: 'action', name: 'Action sociale Bilan domicile', desc: 'Bilan ergothérapie pour action sociale. Analyse par domaine : mobilité, entretien, vie domestique.', content: TRAME_ACTION },
-  ];
-
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -251,21 +238,6 @@
 
   function esc(s) {
     return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
-  function renderDefaultCard(d) {
-    return `
-      <div class="trame-card">
-        <div class="trame-card-head">
-          <div class="trame-nom">${esc(d.name)}</div>
-          <span class="badge-defaut">Par défaut</span>
-        </div>
-        <div class="trame-desc">${esc(d.desc)}</div>
-        <div class="trame-actions">
-          <button class="btn-trame" data-preview="${d.key}">Aperçu</button>
-        </div>
-        <pre class="trame-preview" id="preview-${d.key}">${esc(d.content)}</pre>
-      </div>`;
   }
 
   function renderUserCard(t) {
@@ -327,10 +299,10 @@
 
   if (error) {
     grid.innerHTML = `<div class="grid-loading">Impossible de charger les trames : ${esc(error.message)}</div>`;
+  } else if (data && data.length) {
+    grid.innerHTML = data.map(renderUserCard).join('');
   } else {
-    let html = DEFAULTS.map(renderDefaultCard).join('');
-    if (data && data.length) html += data.map(renderUserCard).join('');
-    grid.innerHTML = html;
+    grid.innerHTML = `<div class="grid-loading">Aucune trame pour l'instant. Créez-en une avec le bouton ci-dessus.</div>`;
   }
 </script>
 </body>
