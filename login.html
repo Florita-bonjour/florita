@@ -203,6 +203,10 @@
           }
           msg.className = 'auth-msg error';
         } else {
+          if (window.PasswordCredential) {
+            var cred = new PasswordCredential({ id: email, password: password });
+            navigator.credentials.store(cred);
+          }
           window.location.href = 'dashboard.html';
         }
       });
