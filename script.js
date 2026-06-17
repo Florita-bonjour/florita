@@ -149,12 +149,13 @@ async function generateCR(destination, notes, measures, trame, sexe) {
         }
 
         if (existingCrId) {
-          const { error: updateErr } = await sb.from('generated_crs').update(crFields).eq('id', existingCrId);
+          const { data: updatedRows, error: updateErr } = await sb.from('generated_crs').update(crFields).eq('id', existingCrId).select('id, ville');
           if (updateErr) {
             console.error('[debug] UPDATE generated_crs FAILED:', updateErr);
           } else {
-            console.log('[debug] UPDATE generated_crs OK, id:', existingCrId, 'ville:', crFields.ville);
-            crSaved = true;
+            console.log('[debug] UPDATE generated_crs — lignes affectées:', updatedRows, '(attendu: id', existingCrId, 'ville:', crFields.ville + ')');
+            if (updatedRows && updatedRows.length > 0) crSaved = true;
+            else console.error('[debug] UPDATE a retourné 0 lignes — RLS bloque probablement la mise à jour');
           }
         } else {
           const { error: insertErr } = await sb.from('generated_crs').insert({
