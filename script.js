@@ -149,19 +149,30 @@ async function generateCR(destination, notes, measures, trame, sexe) {
         }
 
         if (existingCrId) {
-          await sb.from('generated_crs').update(crFields).eq('id', existingCrId);
+          const { error: updateErr } = await sb.from('generated_crs').update(crFields).eq('id', existingCrId);
+          if (updateErr) {
+            console.error('[debug] UPDATE generated_crs FAILED:', updateErr);
+          } else {
+            console.log('[debug] UPDATE generated_crs OK, id:', existingCrId, 'ville:', crFields.ville);
+            crSaved = true;
+          }
         } else {
-          await sb.from('generated_crs').insert({
+          const { error: insertErr } = await sb.from('generated_crs').insert({
             user_id: session.user.id,
             ...crFields,
             draft_id: draftId || null,
           });
+          if (insertErr) {
+            console.error('[debug] INSERT generated_crs FAILED:', insertErr);
+          } else {
+            console.log('[debug] INSERT generated_crs OK, ville:', crFields.ville);
+            crSaved = true;
+          }
         }
-        console.log('[debug] crFields.ville avant export:', crFields.ville);
-        crSaved     = true;
-        exportDate  = crFields.date_vad || '';
-        exportVille = crFields.ville    || '';
-        console.log('[debug] exportVille après affectation:', exportVille);
+        if (crSaved) {
+          exportDate  = crFields.date_vad || '';
+          exportVille = crFields.ville    || '';
+        }
       }
     } catch (saveErr) {
       console.error('CR non sauvegardé:', saveErr);
