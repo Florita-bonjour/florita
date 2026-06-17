@@ -1,15 +1,4 @@
-create table if not exists profiles (
-  id          uuid        primary key references auth.users(id) on delete cascade,
-  first_name  text,
-  updated_at  timestamptz not null default now()
-);
-
-alter table profiles enable row level security;
-
-drop policy if exists "profiles_own_all" on profiles;
-create policy "profiles_own_all" on profiles
-  for all
-  using  (auth.uid() = id)
-  with check (auth.uid() = id);
-
-grant select, insert, update, delete on table profiles to authenticated;
+-- La table profiles existe déjà dans le projet avec les colonnes id, first_name, last_name, account_type.
+-- Le frontend Florita lit et écrit ces champs via auth.users.user_metadata (sb.auth.updateUser),
+-- pas via la Data API — la table est marquée "API DISABLED" et n'est pas exposée via PostgREST.
+-- Cette migration est intentionnellement vide.
