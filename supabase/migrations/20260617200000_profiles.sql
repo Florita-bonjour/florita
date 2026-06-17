@@ -6,6 +6,7 @@ create table if not exists profiles (
 
 alter table profiles enable row level security;
 
+drop policy if exists "profiles_own_all" on profiles;
 create policy "profiles_own_all" on profiles
   for all
   using  (auth.uid() = id)
