@@ -177,7 +177,11 @@ let pendingTrameKey = null;
   if (!sb) return;
 
   const { data, error } = await sb.from('drafts').select('*').eq('id', id).single();
-  if (error || !data || data.status !== 'drafting') return;
+  if (error || !data) return;
+
+  if (data.status === 'generated') {
+    await sb.from('drafts').update({ status: 'drafting' }).eq('id', id);
+  }
 
   draftId = data.id;
 

@@ -126,17 +126,33 @@ async function generateCR(destination, notes, measures, trame, sexe) {
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (session) {
-        await sb.from('generated_crs').insert({
-          user_id: session.user.id,
-          destination: destination,
-          sexe: sexe,
-          date_vad: dateVad || null,
-          ville: ville || null,
-          notes: notes,
-          measures: measures,
+        const crFields = {
+          destination,
+          sexe,
+          date_vad:       dateVad || null,
+          ville:          ville || null,
+          notes,
+          measures,
           generated_text: fullText,
-          draft_id: draftId || null,
-        });
+        };
+
+        let existingCrId = null;
+        if (draftId) {
+          const { data: existing } = await sb.from('generated_crs')
+            .select('id').eq('draft_id', draftId).maybeSingle();
+          existingCrId = existing?.id || null;
+        }
+
+        if (existingCrId) {
+          await sb.from('generated_crs').update(crFields).eq('id', existingCrId);
+        } else {
+          await sb.from('generated_crs').insert({
+            user_id: session.user.id,
+            ...crFields,
+            draft_id: draftId || null,
+          });
+        }
+
         if (draftId) {
           await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
         }
