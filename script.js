@@ -129,7 +129,6 @@ async function generateCR(destination, notes, measures, trame, sexe) {
         await sb.from('generated_crs').insert({
           user_id: session.user.id,
           destination: destination,
-          trame_key: trameKey,
           sexe: sexe,
           date_vad: dateVad || null,
           ville: ville || null,
