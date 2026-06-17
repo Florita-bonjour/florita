@@ -157,9 +157,11 @@ async function generateCR(destination, notes, measures, trame, sexe) {
             draft_id: draftId || null,
           });
         }
+        console.log('[debug] crFields.ville avant export:', crFields.ville);
         crSaved     = true;
         exportDate  = crFields.date_vad || '';
         exportVille = crFields.ville    || '';
+        console.log('[debug] exportVille après affectation:', exportVille);
       }
     } catch (saveErr) {
       console.error('CR non sauvegardé:', saveErr);
