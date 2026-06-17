@@ -60,6 +60,8 @@ let sexe         = '';
 let dateVad      = '';
 let ville        = '';
 let draftId      = null;
+let exportDate   = '';
+let exportVille  = '';
 
 const saved = localStorage.getItem('florita-cr-data');
 if (saved) {
@@ -72,6 +74,8 @@ if (saved) {
     sexe         = data.sexe || '';
     dateVad      = data.dateVad || '';
     ville        = data.ville || '';
+    exportDate   = dateVad;
+    exportVille  = ville;
     draftId      = data.draft_id || null;
   } catch (_) {}
 }
@@ -153,7 +157,9 @@ async function generateCR(destination, notes, measures, trame, sexe) {
             draft_id: draftId || null,
           });
         }
-        crSaved = true;
+        crSaved     = true;
+        exportDate  = crFields.date_vad || '';
+        exportVille = crFields.ville    || '';
       }
     } catch (saveErr) {
       console.error('CR non sauvegardé:', saveErr);
@@ -240,7 +246,7 @@ async function exportWord() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = (dateVad && ville) ? `${dateVad}-${ville}.docx` : 'compte-rendu-ergotherapie.docx';
+  a.download = (exportDate && exportVille) ? `${exportDate}-${exportVille}.docx` : 'compte-rendu-ergotherapie.docx';
   a.click();
   URL.revokeObjectURL(url);
 }
