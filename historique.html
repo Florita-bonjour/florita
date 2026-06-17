@@ -322,6 +322,8 @@
         .order('created_at',{ascending:false});
       if (error) { content.innerHTML='<div class="state">Impossible de charger l\'historique : '+esc(error.message)+'</div>'; return; }
       if (!data||!data.length) { renderEmpty(); return; }
+      console.log('[debug] generated_crs retournés (' + data.length + '):',
+        data.map(function(r){ return {id:r.id, ville:r.ville, draft_id:r.draft_id, created_at:r.created_at}; }));
       renderList(data);
     })();
   </script>
