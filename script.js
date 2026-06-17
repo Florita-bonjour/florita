@@ -179,11 +179,8 @@ async function generateCR(destination, notes, measures, trame, sexe) {
     }
 
     if (crSaved && draftId) {
-      try {
-        await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
-      } catch (draftErr) {
-        console.error('Draft status non mis à jour:', draftErr);
-      }
+      const { error: statusErr } = await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
+      if (statusErr) console.error('Draft status non mis à jour:', statusErr);
     }
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;

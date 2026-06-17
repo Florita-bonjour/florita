@@ -87,7 +87,8 @@ async function saveDraft() {
   if (!draftId) return;
   const sb = window.floritaSb;
   if (!sb) return;
-  await sb.from('drafts').update(collectDraft()).eq('id', draftId);
+  const { error } = await sb.from('drafts').update(collectDraft()).eq('id', draftId);
+  if (error) console.error('saveDraft failed:', error);
 }
 
 function scheduleSave() {
@@ -180,7 +181,8 @@ let pendingTrameKey = null;
   if (error || !data) return;
 
   if (data.status === 'generated') {
-    await sb.from('drafts').update({ status: 'drafting' }).eq('id', id);
+    const { error: resumeErr } = await sb.from('drafts').update({ status: 'drafting' }).eq('id', id);
+    if (resumeErr) console.error('Draft resume failed:', resumeErr);
   }
 
   draftId = data.id;
