@@ -123,6 +123,7 @@ async function generateCR(destination, notes, measures, trame, sexe) {
       editor.innerHTML = mdToHTML(fullText);
     }
 // Sauvegarder le CR en base
+    let crSaved = false;
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (session) {
@@ -138,9 +139,9 @@ async function generateCR(destination, notes, measures, trame, sexe) {
 
         let existingCrId = null;
         if (draftId) {
-          const { data: existing } = await sb.from('generated_crs')
-            .select('id').eq('draft_id', draftId).maybeSingle();
-          existingCrId = existing?.id || null;
+          const { data: existingRows } = await sb.from('generated_crs')
+            .select('id').eq('draft_id', draftId).limit(1);
+          existingCrId = existingRows?.[0]?.id || null;
         }
 
         if (existingCrId) {
@@ -152,13 +153,18 @@ async function generateCR(destination, notes, measures, trame, sexe) {
             draft_id: draftId || null,
           });
         }
-
-        if (draftId) {
-          await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
-        }
+        crSaved = true;
       }
     } catch (saveErr) {
-      console.log('CR non sauvegardé:', saveErr);
+      console.error('CR non sauvegardé:', saveErr);
+    }
+
+    if (crSaved && draftId) {
+      try {
+        await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
+      } catch (draftErr) {
+        console.error('Draft status non mis à jour:', draftErr);
+      }
     }
   } catch (err) {
     editor.innerHTML = `<p class="cr-placeholder">Erreur lors de la génération : ${esc(err.message)}</p>`;
