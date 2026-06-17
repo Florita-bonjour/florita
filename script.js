@@ -59,6 +59,7 @@ let measures     = [];
 let sexe         = '';
 let dateVad      = '';
 let ville        = '';
+let draftId      = null;
 
 const saved = localStorage.getItem('florita-cr-data');
 if (saved) {
@@ -71,6 +72,7 @@ if (saved) {
     sexe         = data.sexe || '';
     dateVad      = data.dateVad || '';
     ville        = data.ville || '';
+    draftId      = data.draft_id || null;
   } catch (_) {}
 }
 
@@ -133,8 +135,12 @@ async function generateCR(destination, notes, measures, trame, sexe) {
           ville: ville || null,
           notes: notes,
           measures: measures,
-          generated_text: fullText
+          generated_text: fullText,
+          draft_id: draftId || null,
         });
+        if (draftId) {
+          await sb.from('drafts').update({ status: 'generated' }).eq('id', draftId);
+        }
       }
     } catch (saveErr) {
       console.log('CR non sauvegardé:', saveErr);

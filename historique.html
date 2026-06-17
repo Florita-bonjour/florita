@@ -298,6 +298,7 @@
         const actions='<div class="cr-actions">'+
           '<button class="btn btn-word" data-act="word"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Télécharger le Word</button>'+
           '<button class="btn btn-ghost" data-act="preview">Aperçu</button>'+
+          (cr.draft_id ? '<a class="btn btn-ghost" href="formulaire.html?draft='+cr.draft_id+'" style="text-decoration:none">Modifier le brouillon</a>' : '')+
           '<button class="btn btn-danger" data-act="delete">Supprimer</button>'+
         '</div>';
         const preview='<div class="cr-preview">'+mdToHTML(cr.generated_text||'')+'</div>';
@@ -317,7 +318,7 @@
       const {data:{session}} = await sb.auth.getSession();
       if (!session) { window.location.href='login.html'; return; }
       const {data,error} = await sb.from('generated_crs')
-        .select('id, destination, trame_key, sexe, date_vad, ville, notes, measures, generated_text, created_at')
+        .select('id, destination, trame_key, sexe, date_vad, ville, notes, measures, generated_text, created_at, draft_id')
         .order('created_at',{ascending:false});
       if (error) { content.innerHTML='<div class="state">Impossible de charger l\'historique : '+esc(error.message)+'</div>'; return; }
       if (!data||!data.length) { renderEmpty(); return; }
