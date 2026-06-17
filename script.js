@@ -185,6 +185,7 @@ async function generateCR(destination, notes, measures, trame, sexe) {
 document.getElementById('btn-word').addEventListener('click', exportWord);
 
 async function exportWord() {
+  console.log('[debug] exportWord() appelé — exportVille:', exportVille, '/ exportDate:', exportDate);
   const { Document, Paragraph, TextRun, Packer } = window.docx;
 
   const patient   = document.getElementById('field-patient').textContent.trim();
