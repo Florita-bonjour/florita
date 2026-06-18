@@ -93,6 +93,60 @@
     .feedback.ok  { display: block; background: #ECFBF1; color: #1A7F4B; }
     .feedback.err { display: block; background: #FFF0F0; color: #D94F4F; }
 
+    .danger-card {
+      border-color: #FFD5D5;
+      background: #FFFAFA;
+    }
+    .danger-card h2 {
+      color: #C0392B;
+      border-bottom-color: #FFD5D5;
+    }
+    .danger-warning {
+      font-size: 0.9rem; color: var(--grey); line-height: 1.6; margin-bottom: 1.2rem;
+    }
+    .btn-danger {
+      font-family: inherit; font-size: 0.9rem; font-weight: 700;
+      padding: 0.6rem 1.3rem; border-radius: 8px; border: none; cursor: pointer;
+      background: #D94F4F; color: #fff; transition: opacity 0.15s;
+    }
+    .btn-danger:hover:not(:disabled) { opacity: 0.85; }
+    .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 14px; padding: 2rem;
+      max-width: 440px; width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 700; color: #C0392B; margin-bottom: 1rem; }
+    .modal p { font-size: 0.92rem; color: var(--grey); line-height: 1.6; margin-bottom: 1.2rem; }
+    .modal .confirm-label { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 0.45rem; display: block; }
+    .modal input[type="text"] {
+      width: 100%; padding: 0.6rem 0.85rem;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.95rem; font-weight: 500; color: var(--text);
+      background: #fff; margin-bottom: 1.2rem;
+    }
+    .modal input[type="text"]:focus { outline: none; border-color: #D94F4F; }
+    .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; }
+    .btn-cancel {
+      font-family: inherit; font-size: 0.9rem; font-weight: 700;
+      padding: 0.6rem 1.2rem; border-radius: 8px;
+      border: 1px solid var(--border); background: #fff;
+      color: var(--grey); cursor: pointer; transition: background 0.15s;
+    }
+    .btn-cancel:hover { background: #f5f5f5; }
+    .modal-error {
+      font-size: 0.88rem; font-weight: 600; margin-bottom: 1rem;
+      padding: 0.55rem 0.9rem; border-radius: 7px;
+      background: #FFF0F0; color: #D94F4F; display: none;
+    }
+
     @media (max-width: 820px) {
       .layout { flex-direction: column; }
       .sidebar { width: 100%; height: auto; position: static; flex-direction: row; align-items: center; padding: 1rem 1.2rem; gap: 1rem; }
@@ -198,7 +252,28 @@
         <button class="btn-save" id="btn-save-password">Changer le mot de passe</button>
         <div class="feedback" id="password-feedback"></div>
       </div>
+      <div class="profile-card danger-card">
+        <h2>Suppression du compte</h2>
+        <p class="danger-warning">
+          Cette action est permanente et irréversible. Tous vos comptes rendus et brouillons seront définitivement supprimés avec votre compte. Aucune restauration ne sera possible.
+        </p>
+        <button class="btn-danger" id="btn-open-delete-modal">Supprimer mon compte</button>
+      </div>
     </main>
+  </div>
+
+  <div class="modal-overlay" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h3 id="modal-title">Supprimer définitivement votre compte ?</h3>
+      <p>Tous vos comptes rendus et brouillons seront supprimés immédiatement. Cette action ne peut pas être annulée.</p>
+      <div class="modal-error" id="delete-error"></div>
+      <label class="confirm-label" for="confirm-input">Pour confirmer, saisissez <strong>SUPPRIMER</strong> ci-dessous</label>
+      <input type="text" id="confirm-input" autocomplete="off" spellcheck="false" />
+      <div class="modal-actions">
+        <button class="btn-cancel" id="btn-cancel-delete">Annuler</button>
+        <button class="btn-danger" id="btn-confirm-delete" disabled>Supprimer définitivement</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -249,6 +324,68 @@
       if (error) showFeedback('info-feedback', 'err', 'Erreur : ' + error.message);
       else       showFeedback('info-feedback', 'ok', 'Informations mises à jour.');
     });
+
+    (function () {
+      const modal    = document.getElementById('delete-modal');
+      const input    = document.getElementById('confirm-input');
+      const btnOpen  = document.getElementById('btn-open-delete-modal');
+      const btnCancel = document.getElementById('btn-cancel-delete');
+      const btnConfirm = document.getElementById('btn-confirm-delete');
+      const errorEl  = document.getElementById('delete-error');
+
+      function openModal() {
+        input.value = '';
+        btnConfirm.disabled = true;
+        errorEl.style.display = 'none';
+        modal.classList.add('open');
+        setTimeout(function () { input.focus(); }, 50);
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+      }
+
+      btnOpen.addEventListener('click', openModal);
+      btnCancel.addEventListener('click', closeModal);
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+      });
+
+      input.addEventListener('input', function () {
+        btnConfirm.disabled = input.value !== 'SUPPRIMER';
+      });
+
+      btnConfirm.addEventListener('click', async function () {
+        btnConfirm.disabled = true;
+        btnConfirm.textContent = 'Suppression…';
+        errorEl.style.display = 'none';
+
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) { window.location.href = 'login.html'; return; }
+
+        try {
+          const res = await fetch(SUPABASE_URL + '/functions/v1/delete-account', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + session.access_token },
+          });
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error || 'Erreur inconnue');
+
+          await sb.auth.signOut();
+          window.location.href = 'login.html';
+        } catch (err) {
+          errorEl.textContent = 'Erreur : ' + err.message;
+          errorEl.style.display = 'block';
+          btnConfirm.disabled = false;
+          btnConfirm.textContent = 'Supprimer définitivement';
+        }
+      });
+    })();
 
     document.getElementById('btn-save-password').addEventListener('click', async function () {
       const btn      = this;
