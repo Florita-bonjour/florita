@@ -144,6 +144,25 @@
     .no-trames-msg a:hover { text-decoration: underline; }
     .btn-generate svg { width: 16px; height: 16px; flex-shrink: 0; }
 
+    /* ── Micro dictée ── */
+    .notes-label-row { display: flex; align-items: center; justify-content: space-between; }
+    .btn-mic {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.28rem 0.65rem; border-radius: 6px;
+      border: 1px solid var(--violet); background: transparent;
+      color: var(--violet); font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+    }
+    .btn-mic:hover { background: rgba(107,76,154,0.08); }
+    .btn-mic.recording {
+      background: #fff0f3; border-color: #d94f4f; color: #d94f4f;
+      animation: mic-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(217,79,79,0.35); }
+      50%       { box-shadow: 0 0 0 5px rgba(217,79,79,0); }
+    }
+
     /* ── Responsive ── */
     @media (max-width: 820px) {
       .layout { flex-direction: column; }
@@ -274,7 +293,18 @@
           <div class="form-section">
             <div class="section-head"><span class="section-title">Notes brutes</span></div>
             <div class="field">
-              <label for="notes">Observations — compatible dictée vocale</label>
+              <div class="notes-label-row">
+                <label for="notes">Observations — compatible dictée vocale</label>
+                <button type="button" id="btn-mic" class="btn-mic" style="display:none" aria-label="Démarrer la dictée">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="2" width="6" height="11" rx="3"/>
+                    <path d="M19 10c0 4-3.134 7-7 7s-7-3-7-7"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/>
+                    <line x1="8" y1="23" x2="16" y2="23"/>
+                  </svg>
+                  Dicter
+                </button>
+              </div>
               <textarea id="notes" placeholder="Saisissez ou dictez vos observations ici…" lang="fr"></textarea>
             </div>
           </div>
@@ -321,5 +351,68 @@
     });
   </script>
   <script src="formulaire.js"></script>
+  <script>
+  (function () {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+
+    var btn      = document.getElementById('btn-mic');
+    var textarea = document.getElementById('notes');
+    btn.style.display = '';
+
+    var MIC_ICON  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M19 10c0 4-3.134 7-7 7s-7-3-7-7"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Dicter';
+    var STOP_ICON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg> Arrêter';
+
+    var recognition = new SR();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    var isRecording = false;
+    var baseText    = '';
+    var finalBuffer = '';
+
+    btn.addEventListener('click', function () {
+      if (isRecording) { recognition.stop(); return; }
+      baseText    = textarea.value;
+      if (baseText && !/[\s\n]$/.test(baseText)) baseText += ' ';
+      finalBuffer = '';
+      recognition.start();
+    });
+
+    recognition.onstart = function () {
+      isRecording = true;
+      btn.classList.add('recording');
+      btn.innerHTML = STOP_ICON;
+    };
+
+    recognition.onend = function () {
+      isRecording = false;
+      btn.classList.remove('recording');
+      btn.innerHTML = MIC_ICON;
+      textarea.value = baseText + finalBuffer;
+    };
+
+    recognition.onresult = function (e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) {
+          finalBuffer += (finalBuffer && !/\s$/.test(finalBuffer) ? ' ' : '') + t;
+        } else {
+          interim += t;
+        }
+      }
+      textarea.value = baseText + finalBuffer + interim;
+    };
+
+    recognition.onerror = function (e) {
+      if (e.error === 'no-speech' || e.error === 'aborted') return;
+      isRecording = false;
+      btn.classList.remove('recording');
+      btn.innerHTML = MIC_ICON;
+    };
+  })();
+  </script>
 </body>
 </html>
