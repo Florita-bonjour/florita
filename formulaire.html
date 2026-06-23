@@ -407,6 +407,7 @@
     };
 
     recognition.onerror = function (e) {
+      console.warn('[Florita mic] erreur SpeechRecognition :', e.error);
       if (e.error === 'no-speech' || e.error === 'aborted') return;
       isRecording = false;
       btn.classList.remove('recording');
