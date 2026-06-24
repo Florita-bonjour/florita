@@ -281,10 +281,13 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
 <script>
+  const sb = window.supabase.createClient(
+    'https://ipflegbroqefhbucbnrv.supabase.co',
+    'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl'
+  );
   document.getElementById('logout').addEventListener('click', async () => {
-    await window.floritaSb.auth.signOut();
+    await sb.auth.signOut();
     window.location.href = 'login.html';
   });
 </script>
