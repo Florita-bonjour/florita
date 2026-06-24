@@ -152,9 +152,10 @@
     .btn-generate:hover { opacity: 0.9; }
     .btn-generate:active { transform: translateY(1px); }
     .btn-generate:disabled { opacity: 0.45; cursor: not-allowed; }
-    .no-trames-msg { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
-    .no-trames-msg a { color: var(--violet); font-weight: 600; text-decoration: none; }
-    .no-trames-msg a:hover { text-decoration: underline; }
+    .no-trames-encart { background: #F8F5FF; border: 1px solid var(--border-light); border-radius: 8px; padding: 1rem 1.2rem; margin-top: 0.5rem; }
+    .no-trames-encart p { font-size: 0.88rem; color: var(--muted); font-weight: 500; line-height: 1.6; margin-bottom: 0.75rem; }
+    .btn-go-trames { display: inline-flex; align-items: center; padding: 0.45rem 1rem; border-radius: 6px; background: var(--violet); color: #fff; font-family: inherit; font-size: 0.85rem; font-weight: 700; text-decoration: none; transition: opacity 0.15s; }
+    .btn-go-trames:hover { opacity: 0.85; }
     .btn-generate svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* ── Micro dictée ── */
@@ -262,9 +263,10 @@
               <select id="trame" disabled>
                 <option value="">Chargement des trames…</option>
               </select>
-              <p id="no-trames-msg" class="no-trames-msg" style="display:none">
-                Aucune trame disponible — <a href="trames.html">créez votre première trame</a>.
-              </p>
+              <div id="no-trames-msg" class="no-trames-encart" style="display:none">
+                <p>Vous n'avez pas encore de trame. Pour générer votre premier CR, importez votre trame Word habituelle dans Mes trames, puis revenez ici.</p>
+                <a href="trames.html" class="btn-go-trames">Importer ma trame →</a>
+              </div>
             </div>
           </div>
 
