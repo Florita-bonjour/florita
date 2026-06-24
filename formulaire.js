@@ -133,8 +133,11 @@ document.getElementById('cr-form').addEventListener('submit', async (e) => {
 
   const sb  = window.floritaSb;
   const { data: { session } } = await sb.auth.getSession();
-  const hasSeen = session?.user?.user_metadata?.has_seen_disclaimer;
-  if (hasSeen) { window.location.href = 'index.html'; return; }
+
+  // Incrémenter à chaque mise à jour des CGU pour forcer la ré-acceptation
+  const CGU_VERSION  = '2';
+  const versionSeen  = session?.user?.user_metadata?.cgu_version_seen;
+  if (versionSeen === CGU_VERSION) { window.location.href = 'index.html'; return; }
 
   const modal = document.getElementById('disclaimer-modal');
   const check = document.getElementById('disclaimer-check');
@@ -149,7 +152,7 @@ document.getElementById('cr-form').addEventListener('submit', async (e) => {
   btn.addEventListener('click', async function() {
     btn.disabled    = true;
     btn.textContent = 'Chargement…';
-    await sb.auth.updateUser({ data: { has_seen_disclaimer: true } });
+    await sb.auth.updateUser({ data: { cgu_version_seen: CGU_VERSION } });
     window.location.href = 'index.html';
   }, { once: true });
 });
