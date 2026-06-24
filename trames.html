@@ -213,12 +213,12 @@
         <p>Gérez vos modèles de comptes rendus.</p>
       </div>
       <div class="page-actions">
-        <label class="btn-action" id="import-zone">
+        <label class="btn-action btn-primary" id="import-zone">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Importer un .docx
           <input type="file" id="import-input" accept=".docx" style="display:none" />
         </label>
-        <a href="trames-edit.html" class="btn-action btn-primary">+ Nouvelle trame</a>
+        <a href="trames-edit.html" class="btn-action">+ Nouvelle trame</a>
       </div>
     </div>
 
@@ -318,7 +318,7 @@
   } else if (data && data.length) {
     grid.innerHTML = data.map(renderUserCard).join('');
   } else {
-    grid.innerHTML = `<div class="grid-loading">Aucune trame pour l'instant. Créez-en une avec le bouton ci-dessus.</div>`;
+    grid.innerHTML = `<div class="grid-loading">Vous n'avez pas encore de trame. Si vous avez déjà un modèle Word, commencez par l'importer avec le bouton ci-dessus. Vous pourrez aussi créer une trame directement dans Florita.</div>`;
   }
 </script>
 </body>
