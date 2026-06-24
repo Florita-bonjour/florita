@@ -77,6 +77,9 @@
     }
     .auth-msg.error { display: block; background: #FFF0F0; color: #D94F4F; }
     .auth-msg.success { display: block; background: #E6F5EE; color: #2D9F6F; }
+    .login-footer { margin-top: 1.5rem; text-align: center; }
+    .login-footer a { font-size: 0.78rem; color: #9BA8B4; text-decoration: none; font-weight: 500; }
+    .login-footer a:hover { color: #637080; text-decoration: underline; }
     @media (max-width: 768px) {
       .split { flex-direction: column; }
       .split-left { min-height: 200px; padding: 2rem; }
@@ -147,6 +150,9 @@
           <button type="submit" class="auth-btn">Créer mon compte</button>
           <div id="reg-msg" class="auth-msg"></div>
         </form>
+      </div>
+      <div class="login-footer">
+        <a href="cgu.html">Conditions générales d'utilisation</a>
       </div>
     </div>
   </div>
