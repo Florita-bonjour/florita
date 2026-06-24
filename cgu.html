@@ -8,49 +8,22 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #FAFAF8; --violet: #6B4C9A; --violet-dark: #5A3D87;
+      --bg: #FAFAF8; --violet: #6B4C9A;
       --rose: #D4537E; --text: #2C2C2A; --grey: #637080;
       --border: #D0D7DE; --border-light: #E8E4F0;
     }
     body { font-family: 'Quicksand', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    .layout { display: flex; min-height: 100vh; }
 
-    .sidebar {
-      width: 240px; flex-shrink: 0;
-      background: linear-gradient(160deg, #6B4C9A 0%, #D4537E 100%);
-      color: #fff; padding: 1.8rem 1.2rem;
-      display: flex; flex-direction: column;
-      position: sticky; top: 0; height: 100vh;
-    }
-    .sidebar-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 2.4rem; text-decoration: none; }
-    .sidebar-logo .name { font-size: 1.6rem; font-weight: 700; color: #fff; }
-    .sidebar-logo .name span { color: #F5C542; }
-    .sidebar-logo svg { transform: translateY(-1px); }
-    .nav { display: flex; flex-direction: column; gap: 4px; }
-    .nav a {
-      display: flex; align-items: center; gap: 10px;
-      padding: 0.7rem 0.85rem; border-radius: 8px;
-      color: rgba(255,255,255,0.82); text-decoration: none;
-      font-size: 0.92rem; font-weight: 600; transition: background 0.15s, color 0.15s;
-    }
-    .nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .nav a.active { background: rgba(255,255,255,0.18); color: #fff; }
-    .nav a svg { flex-shrink: 0; }
-    .sidebar-bottom { margin-top: auto; }
-    .logout-btn {
-      width: 100%; display: flex; align-items: center; gap: 10px;
-      padding: 0.7rem 0.85rem; border-radius: 8px;
-      background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16);
-      color: #fff; font-family: inherit; font-size: 0.9rem; font-weight: 600;
-      cursor: pointer; transition: background 0.15s;
-    }
-    .logout-btn:hover { background: rgba(255,255,255,0.2); }
-    .sidebar-sep { height: 1px; background: rgba(255,255,255,0.18); margin: 4px 0.85rem; }
-    .sidebar-aide { display: flex; align-items: center; gap: 10px; padding: 0.7rem 0.85rem; border-radius: 8px; color: rgba(255,255,255,0.82); text-decoration: none; font-size: 0.92rem; font-weight: 600; transition: background 0.15s, color 0.15s; }
-    .sidebar-aide:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .sidebar-aide.active { background: rgba(255,255,255,0.18); color: #fff; }
+    .cgu-page { max-width: 760px; margin: 0 auto; padding: 2.4rem 1.5rem 3.5rem; }
 
-    .main { flex: 1; padding: 2.6rem 3rem; max-width: 820px; }
+    .cgu-page-header {
+      text-align: center; margin-bottom: 2.5rem;
+      padding-bottom: 1.6rem; border-bottom: 1px solid var(--border-light);
+    }
+    .cgu-logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    .cgu-logo svg { transform: translateY(-1px); }
+    .cgu-logo-name { font-size: 1.6rem; font-weight: 700; color: var(--text); }
+    .cgu-logo-name span { color: var(--violet); }
 
     .cgu-header { margin-bottom: 1.8rem; }
     .cgu-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text); }
@@ -72,224 +45,180 @@
     .cgu-body a:hover { text-decoration: underline; }
     .cgu-footer-note { font-size: 0.82rem; color: var(--grey); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-light); line-height: 1.65; }
 
-    @media (max-width: 820px) {
-      .layout { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: static; flex-direction: row; align-items: center; padding: 1rem 1.2rem; gap: 1rem; }
-      .sidebar-logo { margin-bottom: 0; }
-      .nav { flex-direction: row; flex: 1; justify-content: center; gap: 2px; }
-      .nav a span { display: none; }
-      .sidebar-bottom { margin-top: 0; margin-left: auto; display: flex; align-items: center; gap: 4px; }
-      .logout-btn span { display: none; }
-      .sidebar-aide span { display: none; }
-      .sidebar-sep { display: none; }
-      .main { padding: 1.5rem 1.2rem; }
+    .cgu-back { margin-top: 2rem; text-align: center; }
+    .cgu-back a { font-size: 0.82rem; color: var(--grey); text-decoration: none; font-weight: 500; }
+    .cgu-back a:hover { color: var(--violet); text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .cgu-page { padding: 1.5rem 1rem 2.5rem; }
       .cgu-body { padding: 1.2rem; }
     }
   </style>
 </head>
 <body>
-<div class="layout">
-  <aside class="sidebar">
-    <a href="dashboard.html" class="sidebar-logo">
+<div class="cgu-page">
+
+  <header class="cgu-page-header">
+    <a href="login.html" class="cgu-logo">
       <svg width="40" height="25" viewBox="0 0 48 30" aria-hidden="true">
-        <path d="M2,28 A22,22 0 0,1 46,28" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M7,28 A17,17 0 0,1 41,28" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M12,28 A12,12 0 0,1 36,28" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M17,28 A7,7 0 0,1 31,28" fill="none" stroke="rgba(255,255,255,0.38)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M22,28 A2,2 0 0,1 26,28" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M2,28 A22,22 0 0,1 46,28" fill="none" stroke="#6B4C9A" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M7,28 A17,17 0 0,1 41,28" fill="none" stroke="#845AA5" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M12,28 A12,12 0 0,1 36,28" fill="none" stroke="#A3619E" stroke-width="3" stroke-linecap="round"/>
+        <path d="M17,28 A7,7 0 0,1 31,28" fill="none" stroke="#C05A8A" stroke-width="3" stroke-linecap="round"/>
+        <path d="M22,28 A2,2 0 0,1 26,28" fill="none" stroke="#D4537E" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
-      <div class="name">florita<span>.</span></div>
+      <span class="cgu-logo-name">florita<span>.</span></span>
     </a>
-    <nav class="nav">
-      <a href="dashboard.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>Tableau de bord</span>
-      </a>
-      <a href="formulaire.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Nouveau CR</span>
-      </a>
-      <a href="historique.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
-        <span>Historique</span>
-      </a>
-      <a href="trames.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span>Mes trames</span>
-      </a>
-      <a href="profil.html">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span>Profil</span>
-      </a>
-    </nav>
-    <div class="sidebar-bottom">
-      <div class="sidebar-sep"></div>
-      <a href="aide.html" class="sidebar-aide">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span>Aide</span>
-      </a>
-      <button class="logout-btn" id="logout">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>Déconnexion</span>
-      </button>
-    </div>
-  </aside>
+  </header>
 
-  <main class="main">
-    <div class="cgu-header">
-      <h1>Conditions générales d'utilisation</h1>
-      <p class="cgu-meta">
-        Florita — Service de génération assistée de comptes rendus pour ergothérapeutes<br>
-        Version 1.0 — Date d'entrée en vigueur : 24 juin 2026
-      </p>
-    </div>
+  <div class="cgu-header">
+    <h1>Conditions générales d'utilisation</h1>
+    <p class="cgu-meta">
+      Florita — Service de génération assistée de comptes rendus pour ergothérapeutes<br>
+      Version 1.0 — Date d'entrée en vigueur : 24 juin 2026
+    </p>
+  </div>
 
-    <div class="cgu-body">
+  <div class="cgu-body">
 
-      <h2>Article 1 — Identification de l'éditeur</h2>
-      <p>Le service Florita (ci-après « le Service ») est édité par :</p>
-      <p>Corinne GAUTIER, entrepreneur individuel, exerçant sous le nom commercial FLORITA, immatriculée au RNE sous le numéro SIRET 987 400 546 00022, dont le siège social est situé au 16 rue Capitaine Pierre Gardinier, 56100 Lorient, adresse de contact : <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a></p>
+    <h2>Article 1 — Identification de l'éditeur</h2>
+    <p>Le service Florita (ci-après « le Service ») est édité par :</p>
+    <p>Corinne GAUTIER, entrepreneur individuel, exerçant sous le nom commercial FLORITA, immatriculée au RNE sous le numéro SIRET 987 400 546 00022, dont le siège social est situé au 16 rue Capitaine Pierre Gardinier, 56100 Lorient, adresse de contact : <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a></p>
 
-      <h2>Article 2 — Description du Service</h2>
-      <p>Florita est un service en ligne accessible à l'adresse <a href="https://florita-cr.netlify.app">florita-cr.netlify.app</a>, destiné exclusivement aux professionnels de santé, et en particulier aux ergothérapeutes.</p>
-      <p>Le Service permet à l'Utilisateur de saisir ou dicter des notes brutes issues de visites à domicile, de générer automatiquement un brouillon de compte rendu structuré à l'aide d'un système d'intelligence artificielle, et d'exporter ce brouillon au format Word (.docx) pour relecture, amendement et validation.</p>
-      <p>Le Service génère exclusivement des brouillons destinés à être relus, corrigés et validés par l'Utilisateur avant tout usage professionnel ou envoi à un tiers.</p>
+    <h2>Article 2 — Description du Service</h2>
+    <p>Florita est un service en ligne accessible à l'adresse <a href="https://florita-cr.netlify.app">florita-cr.netlify.app</a>, destiné exclusivement aux professionnels de santé, et en particulier aux ergothérapeutes.</p>
+    <p>Le Service permet à l'Utilisateur de saisir ou dicter des notes brutes issues de visites à domicile, de générer automatiquement un brouillon de compte rendu structuré à l'aide d'un système d'intelligence artificielle, et d'exporter ce brouillon au format Word (.docx) pour relecture, amendement et validation.</p>
+    <p>Le Service génère exclusivement des brouillons destinés à être relus, corrigés et validés par l'Utilisateur avant tout usage professionnel ou envoi à un tiers.</p>
 
-      <h2>Article 3 — Acceptation des conditions</h2>
-      <p>L'accès et l'utilisation du Service sont soumis à l'acceptation pleine et entière des présentes Conditions Générales d'Utilisation (ci-après « CGU »).</p>
-      <p>En créant un compte ou en utilisant le Service, l'Utilisateur reconnaît avoir lu, compris et accepté les présentes CGU sans réserve.</p>
-      <p>L'éditeur se réserve le droit de modifier les présentes CGU à tout moment. Les modifications prennent effet dès leur publication sur le Service. L'Utilisateur sera informé de toute modification substantielle par email. L'utilisation continue du Service après notification vaut acceptation des nouvelles conditions.</p>
+    <h2>Article 3 — Acceptation des conditions</h2>
+    <p>L'accès et l'utilisation du Service sont soumis à l'acceptation pleine et entière des présentes Conditions Générales d'Utilisation (ci-après « CGU »).</p>
+    <p>En créant un compte ou en utilisant le Service, l'Utilisateur reconnaît avoir lu, compris et accepté les présentes CGU sans réserve.</p>
+    <p>L'éditeur se réserve le droit de modifier les présentes CGU à tout moment. Les modifications prennent effet dès leur publication sur le Service. L'Utilisateur sera informé de toute modification substantielle par email. L'utilisation continue du Service après notification vaut acceptation des nouvelles conditions.</p>
 
-      <h2>Article 4 — Accès au Service et inscription</h2>
-      <p>L'accès au Service nécessite la création d'un compte personnel. L'Utilisateur s'engage à :</p>
-      <ul>
-        <li>fournir des informations exactes, complètes et à jour lors de l'inscription,</li>
-        <li>maintenir la confidentialité de ses identifiants de connexion,</li>
-        <li>ne pas partager son accès avec des tiers,</li>
-        <li>notifier immédiatement l'éditeur de toute utilisation non autorisée de son compte.</li>
-      </ul>
-      <p>L'éditeur se réserve le droit de suspendre ou supprimer tout compte dont les informations s'avèrent inexactes ou dont l'utilisation est contraire aux présentes CGU.</p>
+    <h2>Article 4 — Accès au Service et inscription</h2>
+    <p>L'accès au Service nécessite la création d'un compte personnel. L'Utilisateur s'engage à :</p>
+    <ul>
+      <li>fournir des informations exactes, complètes et à jour lors de l'inscription,</li>
+      <li>maintenir la confidentialité de ses identifiants de connexion,</li>
+      <li>ne pas partager son accès avec des tiers,</li>
+      <li>notifier immédiatement l'éditeur de toute utilisation non autorisée de son compte.</li>
+    </ul>
+    <p>L'éditeur se réserve le droit de suspendre ou supprimer tout compte dont les informations s'avèrent inexactes ou dont l'utilisation est contraire aux présentes CGU.</p>
 
-      <h2>Article 5 — Conditions tarifaires et abonnement</h2>
-      <p>L'accès au Service est soumis au paiement d'un abonnement selon les tarifs en vigueur affichés sur le Service au moment de la souscription.</p>
-      <p>Les tarifs sont indiqués en euros toutes taxes comprises (TTC). L'éditeur se réserve le droit de modifier ses tarifs à tout moment, avec un préavis d'au moins 30 jours communiqué par email.</p>
-      <p>En cas de désaccord avec une modification tarifaire, l'Utilisateur peut résilier son abonnement avant l'entrée en vigueur des nouveaux tarifs, sans pénalité.</p>
-      <p>Le Service peut proposer une période d'essai gratuite selon les conditions précisées au moment de l'inscription. À l'issue de cette période, l'abonnement bascule automatiquement vers une formule payante sauf résiliation expresse de l'Utilisateur.</p>
+    <h2>Article 5 — Conditions tarifaires et abonnement</h2>
+    <p>L'accès au Service est soumis au paiement d'un abonnement selon les tarifs en vigueur affichés sur le Service au moment de la souscription.</p>
+    <p>Les tarifs sont indiqués en euros toutes taxes comprises (TTC). L'éditeur se réserve le droit de modifier ses tarifs à tout moment, avec un préavis d'au moins 30 jours communiqué par email.</p>
+    <p>En cas de désaccord avec une modification tarifaire, l'Utilisateur peut résilier son abonnement avant l'entrée en vigueur des nouveaux tarifs, sans pénalité.</p>
+    <p>Le Service peut proposer une période d'essai gratuite selon les conditions précisées au moment de l'inscription. À l'issue de cette période, l'abonnement bascule automatiquement vers une formule payante sauf résiliation expresse de l'Utilisateur.</p>
 
-      <h2>Article 6 — Résiliation</h2>
-      <p>L'Utilisateur peut résilier son abonnement à tout moment depuis son espace personnel (page Profil &gt; Supprimer mon compte) ou par email à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>.</p>
-      <p>La résiliation prend effet à la fin de la période d'abonnement en cours. Aucun remboursement prorata temporis n'est accordé pour les périodes déjà facturées, sauf disposition légale contraire.</p>
-      <p>En cas de résiliation, les données de l'Utilisateur (comptes rendus, brouillons, trames) sont supprimées définitivement dans un délai de 30 jours suivant la date effective de résiliation.</p>
+    <h2>Article 6 — Résiliation</h2>
+    <p>L'Utilisateur peut résilier son abonnement à tout moment depuis son espace personnel (page Profil &gt; Supprimer mon compte) ou par email à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>.</p>
+    <p>La résiliation prend effet à la fin de la période d'abonnement en cours. Aucun remboursement prorata temporis n'est accordé pour les périodes déjà facturées, sauf disposition légale contraire.</p>
+    <p>En cas de résiliation, les données de l'Utilisateur (comptes rendus, brouillons, trames) sont supprimées définitivement dans un délai de 30 jours suivant la date effective de résiliation.</p>
 
-      <h2>Article 7 — Responsabilités de l'Utilisateur</h2>
-      <h3>7.1 Statut professionnel</h3>
-      <p>Le Service est réservé aux professionnels de santé exerçant dans le cadre de leur activité professionnelle. En s'inscrivant, l'Utilisateur certifie disposer des qualifications, autorisations et assurances professionnelles requises pour l'exercice de son activité.</p>
+    <h2>Article 7 — Responsabilités de l'Utilisateur</h2>
+    <h3>7.1 Statut professionnel</h3>
+    <p>Le Service est réservé aux professionnels de santé exerçant dans le cadre de leur activité professionnelle. En s'inscrivant, l'Utilisateur certifie disposer des qualifications, autorisations et assurances professionnelles requises pour l'exercice de son activité.</p>
 
-      <h3>7.2 Validation obligatoire des documents générés</h3>
-      <p>Le Service génère exclusivement des brouillons. L'Utilisateur reconnaît expressément que tout document généré par le Service doit faire l'objet d'une relecture attentive, d'une correction si nécessaire, et d'une validation par l'Utilisateur avant tout envoi à un tiers. La responsabilité du contenu du document final incombe exclusivement à l'Utilisateur signataire. L'éditeur ne saurait être tenu responsable des conséquences de l'utilisation d'un document généré sans validation préalable par l'Utilisateur.</p>
+    <h3>7.2 Validation obligatoire des documents générés</h3>
+    <p>Le Service génère exclusivement des brouillons. L'Utilisateur reconnaît expressément que tout document généré par le Service doit faire l'objet d'une relecture attentive, d'une correction si nécessaire, et d'une validation par l'Utilisateur avant tout envoi à un tiers. La responsabilité du contenu du document final incombe exclusivement à l'Utilisateur signataire. L'éditeur ne saurait être tenu responsable des conséquences de l'utilisation d'un document généré sans validation préalable par l'Utilisateur.</p>
 
-      <h3>7.3 Données patients</h3>
-      <p>L'Utilisateur s'engage formellement à ne jamais saisir dans le Service de données à caractère personnel permettant l'identification directe d'un patient (nom, prénom, date de naissance, numéro de sécurité sociale, adresse précise, etc.).</p>
-      <p>Les données confidentielles relatives au patient doivent être intégrées manuellement par l'Utilisateur directement dans le document exporté, sans transiter par le Service.</p>
+    <h3>7.3 Données patients</h3>
+    <p>L'Utilisateur s'engage formellement à ne jamais saisir dans le Service de données à caractère personnel permettant l'identification directe d'un patient (nom, prénom, date de naissance, numéro de sécurité sociale, adresse précise, etc.).</p>
+    <p>Les données confidentielles relatives au patient doivent être intégrées manuellement par l'Utilisateur directement dans le document exporté, sans transiter par le Service.</p>
 
-      <h3>7.4 Consentement du patient</h3>
-      <p>L'Utilisateur est seul responsable de l'information et du recueil du consentement du patient quant à l'utilisation d'un outil d'intelligence artificielle dans le cadre de la préparation de son compte rendu, conformément aux recommandations professionnelles en vigueur (recommandations ANFE, avril 2026) et à la réglementation applicable.</p>
+    <h3>7.4 Consentement du patient</h3>
+    <p>L'Utilisateur est seul responsable de l'information et du recueil du consentement du patient quant à l'utilisation d'un outil d'intelligence artificielle dans le cadre de la préparation de son compte rendu, conformément aux recommandations professionnelles en vigueur (recommandations ANFE, avril 2026) et à la réglementation applicable.</p>
 
-      <h3>7.5 Usage conforme</h3>
-      <p>L'Utilisateur s'engage à utiliser le Service conformément à sa destination et à la réglementation applicable à sa profession. Il est interdit d'utiliser le Service à des fins illicites, frauduleuses ou contraires à l'éthique professionnelle.</p>
+    <h3>7.5 Usage conforme</h3>
+    <p>L'Utilisateur s'engage à utiliser le Service conformément à sa destination et à la réglementation applicable à sa profession. Il est interdit d'utiliser le Service à des fins illicites, frauduleuses ou contraires à l'éthique professionnelle.</p>
 
-      <h2>Article 8 — Responsabilité de l'éditeur</h2>
-      <h3>8.1 Nature du Service</h3>
-      <p>Le Service est un outil d'assistance à la rédaction. Il ne constitue pas un acte médical, un diagnostic, une expertise clinique ou un avis professionnel. Les contenus générés sont produits automatiquement par un système d'intelligence artificielle et peuvent contenir des erreurs, des imprécisions ou des omissions.</p>
+    <h2>Article 8 — Responsabilité de l'éditeur</h2>
+    <h3>8.1 Nature du Service</h3>
+    <p>Le Service est un outil d'assistance à la rédaction. Il ne constitue pas un acte médical, un diagnostic, une expertise clinique ou un avis professionnel. Les contenus générés sont produits automatiquement par un système d'intelligence artificielle et peuvent contenir des erreurs, des imprécisions ou des omissions.</p>
 
-      <h3>8.2 Limitation de responsabilité</h3>
-      <p>L'éditeur ne saurait être tenu responsable :</p>
-      <ul>
-        <li>des erreurs, inexactitudes ou omissions contenues dans les documents générés,</li>
-        <li>des conséquences professionnelles, médicales, juridiques ou financières découlant de l'utilisation des documents générés sans validation préalable par l'Utilisateur,</li>
-        <li>des interruptions, pannes ou indisponibilités temporaires du Service,</li>
-        <li>ni de la perte de données résultant d'un événement hors du contrôle de l'éditeur.</li>
-      </ul>
+    <h3>8.2 Limitation de responsabilité</h3>
+    <p>L'éditeur ne saurait être tenu responsable :</p>
+    <ul>
+      <li>des erreurs, inexactitudes ou omissions contenues dans les documents générés,</li>
+      <li>des conséquences professionnelles, médicales, juridiques ou financières découlant de l'utilisation des documents générés sans validation préalable par l'Utilisateur,</li>
+      <li>des interruptions, pannes ou indisponibilités temporaires du Service,</li>
+      <li>ni de la perte de données résultant d'un événement hors du contrôle de l'éditeur.</li>
+    </ul>
 
-      <h3>8.3 Obligation de moyens</h3>
-      <p>L'éditeur s'engage à mettre en œuvre tous les moyens raisonnables pour assurer la disponibilité et la sécurité du Service, sans toutefois garantir une disponibilité ininterrompue.</p>
+    <h3>8.3 Obligation de moyens</h3>
+    <p>L'éditeur s'engage à mettre en œuvre tous les moyens raisonnables pour assurer la disponibilité et la sécurité du Service, sans toutefois garantir une disponibilité ininterrompue.</p>
 
-      <h2>Article 9 — Données personnelles et RGPD</h2>
-      <h3>9.1 Responsable de traitement</h3>
-      <p>Corinne GAUTIER (FLORITA), 16 rue Capitaine Pierre Gardinier, 56100 Lorient — <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a></p>
+    <h2>Article 9 — Données personnelles et RGPD</h2>
+    <h3>9.1 Responsable de traitement</h3>
+    <p>Corinne GAUTIER (FLORITA), 16 rue Capitaine Pierre Gardinier, 56100 Lorient — <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a></p>
 
-      <h3>9.2 Données collectées</h3>
-      <p>Le Service collecte uniquement les données nécessaires à son fonctionnement : données d'identification (prénom, nom, adresse email, type de compte), données d'usage (comptes rendus générés, brouillons, trames personnelles), et données techniques (logs de connexion).</p>
-      <p>Aucune donnée permettant l'identification directe d'un patient ne doit transiter par le Service (voir Article 7.3).</p>
+    <h3>9.2 Données collectées</h3>
+    <p>Le Service collecte uniquement les données nécessaires à son fonctionnement : données d'identification (prénom, nom, adresse email, type de compte), données d'usage (comptes rendus générés, brouillons, trames personnelles), et données techniques (logs de connexion).</p>
+    <p>Aucune donnée permettant l'identification directe d'un patient ne doit transiter par le Service (voir Article 7.3).</p>
 
-      <h3>9.3 Finalités du traitement</h3>
-      <p>Les données sont traitées pour la fourniture et l'amélioration du Service, la gestion des comptes utilisateurs et de la relation commerciale, et le respect des obligations légales.</p>
+    <h3>9.3 Finalités du traitement</h3>
+    <p>Les données sont traitées pour la fourniture et l'amélioration du Service, la gestion des comptes utilisateurs et de la relation commerciale, et le respect des obligations légales.</p>
 
-      <h3>9.4 Sous-traitants</h3>
-      <p>Le Service fait appel aux sous-traitants suivants, avec lesquels des garanties contractuelles de protection des données sont en place :</p>
-      <ul>
-        <li>Supabase Inc. (infrastructure base de données et authentification, serveurs en Europe),</li>
-        <li>Netlify Inc. (hébergement frontend),</li>
-        <li>Anthropic PBC (traitement des notes brutes par intelligence artificielle pour la génération des brouillons).</li>
-      </ul>
-      <p>L'Utilisateur est informé que les notes brutes saisies dans le formulaire sont transmises à Anthropic PBC pour le traitement par intelligence artificielle. Ces données ne doivent en aucun cas contenir de données à caractère personnel identifiantes (voir Article 7.3).</p>
+    <h3>9.4 Sous-traitants</h3>
+    <p>Le Service fait appel aux sous-traitants suivants, avec lesquels des garanties contractuelles de protection des données sont en place :</p>
+    <ul>
+      <li>Supabase Inc. (infrastructure base de données et authentification, serveurs en Europe),</li>
+      <li>Netlify Inc. (hébergement frontend),</li>
+      <li>Anthropic PBC (traitement des notes brutes par intelligence artificielle pour la génération des brouillons).</li>
+    </ul>
+    <p>L'Utilisateur est informé que les notes brutes saisies dans le formulaire sont transmises à Anthropic PBC pour le traitement par intelligence artificielle. Ces données ne doivent en aucun cas contenir de données à caractère personnel identifiantes (voir Article 7.3).</p>
 
-      <h3>9.5 Durée de conservation</h3>
-      <p>Les données sont conservées pendant toute la durée de l'abonnement actif, puis supprimées dans un délai de 30 jours suivant la résiliation du compte.</p>
+    <h3>9.5 Durée de conservation</h3>
+    <p>Les données sont conservées pendant toute la durée de l'abonnement actif, puis supprimées dans un délai de 30 jours suivant la résiliation du compte.</p>
 
-      <h3>9.6 Droits de l'Utilisateur</h3>
-      <p>Conformément au RGPD, l'Utilisateur dispose des droits suivants sur ses données : accès, rectification, effacement, portabilité, limitation du traitement, opposition. Ces droits s'exercent par email à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>. En cas de réclamation non résolue, l'Utilisateur peut saisir la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>
+    <h3>9.6 Droits de l'Utilisateur</h3>
+    <p>Conformément au RGPD, l'Utilisateur dispose des droits suivants sur ses données : accès, rectification, effacement, portabilité, limitation du traitement, opposition. Ces droits s'exercent par email à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>. En cas de réclamation non résolue, l'Utilisateur peut saisir la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>
 
-      <h2>Article 10 — Intelligence artificielle</h2>
-      <h3>10.1 Nature du système</h3>
-      <p>Le Service utilise un système d'intelligence artificielle (modèle de langage) fourni par Anthropic PBC pour générer des brouillons de comptes rendus à partir des notes saisies par l'Utilisateur.</p>
+    <h2>Article 10 — Intelligence artificielle</h2>
+    <h3>10.1 Nature du Service</h3>
+    <p>Florita génère un brouillon d'aide à la rédaction à partir des notes saisies par l'Utilisateur. Ce brouillon n'est pas un document final : il constitue un support de travail qui doit être relu, amendé et validé par l'ergothérapeute avant toute transmission. Le Service ne produit pas d'actes professionnels, de diagnostics ni d'évaluations cliniques.</p>
 
-      <h3>10.2 Limites du système</h3>
-      <p>L'Utilisateur reconnaît que le système d'intelligence artificielle :</p>
-      <ul>
-        <li>ne dispose d'aucune capacité de jugement clinique, de diagnostic ou d'expertise professionnelle,</li>
-        <li>peut produire des contenus inexacts, incomplets ou inadaptés à la situation clinique spécifique,</li>
-        <li>ne se substitue en aucun cas au jugement professionnel de l'ergothérapeute.</li>
-      </ul>
+    <h3>10.2 Engagements de l'Utilisateur</h3>
+    <p>En utilisant le Service, l'Utilisateur s'engage à :</p>
+    <ul>
+      <li>relire, amender et valider le brouillon généré avant toute transmission à un tiers ;</li>
+      <li>assumer l'entière responsabilité du contenu final transmis ;</li>
+      <li>informer son patient que l'intelligence artificielle a contribué à la rédaction de ce document, conformément aux recommandations ANFE (avril 2026) et à la réglementation en vigueur.</li>
+    </ul>
+    <p>Ces obligations découlent de la réglementation en vigueur et des recommandations professionnelles applicables à l'ergothérapeute, indépendamment de toute exigence propre à Florita.</p>
 
-      <h3>10.3 Mention obligatoire</h3>
-      <p>Conformément aux recommandations ANFE d'avril 2026, tout document généré par le Service comporte automatiquement la mention suivante en tête de document : <em>« [BROUILLON — document généré avec assistance IA. À relire, amender et valider par l'ergothérapeute avant tout envoi. Conformément aux recommandations ANFE avril 2026.] »</em></p>
-      <p>L'Utilisateur s'engage à conserver cette mention dans le document final, ou à la remplacer par une formulation équivalente précisant que le document a été produit avec assistance IA et validé par l'ergothérapeute. La suppression pure et simple de cette mention sans équivalent engage la seule responsabilité de l'Utilisateur.</p>
-      <p>Lors de la première génération d'un compte rendu, l'Utilisateur est invité à confirmer explicitement avoir pris connaissance de cette obligation avant d'accéder au document généré. Cette confirmation est réinitialisée à chaque mise à jour substantielle des présentes CGU.</p>
+    <h3>10.3 Traçabilité et conservation des données</h3>
+    <p>La traçabilité du processus clinique (journal de prompts, dossier patient, etc.) relève de la responsabilité exclusive de l'ergothérapeute. Florita ne conserve pas les notes brutes saisies dans le formulaire une fois le compte rendu généré : elles sont transmises au système d'intelligence artificielle pour la génération du brouillon, puis ne sont pas stockées par le Service.</p>
 
-      <h2>Article 11 — Propriété intellectuelle</h2>
-      <h3>11.1 Propriété de l'éditeur</h3>
-      <p>L'ensemble des éléments du Service (interface, code, algorithmes, prompts, marque FLORITA, logo) sont la propriété exclusive de Corinne GAUTIER (FLORITA) et sont protégés par les lois sur la propriété intellectuelle. Toute reproduction, représentation ou utilisation non autorisée est interdite.</p>
+    <h3>10.4 Mention BROUILLON</h3>
+    <p>Chaque document exporté porte automatiquement une mention signalant son statut de brouillon généré avec assistance IA. L'Utilisateur s'engage à conserver cette mention dans le document transmis, ou à la remplacer par une formulation équivalente précisant que le document a été produit avec assistance IA et validé par l'ergothérapeute. La suppression de cette mention sans équivalent engage la seule responsabilité de l'Utilisateur.</p>
 
-      <h3>11.2 Propriété de l'Utilisateur</h3>
-      <p>Les notes brutes saisies par l'Utilisateur et les documents générés à partir de celles-ci restent la propriété exclusive de l'Utilisateur. L'éditeur ne revendique aucun droit sur ces contenus et ne les utilise pas à d'autres fins que la fourniture du Service.</p>
+    <h2>Article 11 — Propriété intellectuelle</h2>
+    <h3>11.1 Propriété de l'éditeur</h3>
+    <p>L'ensemble des éléments du Service (interface, code, algorithmes, prompts, marque FLORITA, logo) sont la propriété exclusive de Corinne GAUTIER (FLORITA) et sont protégés par les lois sur la propriété intellectuelle. Toute reproduction, représentation ou utilisation non autorisée est interdite.</p>
 
-      <h2>Article 12 — Droit applicable et juridiction compétente</h2>
-      <p>Les présentes CGU sont soumises au droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes CGU, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort du siège social de l'éditeur (Lorient), sauf disposition légale contraire applicable au consommateur.</p>
+    <h3>11.2 Propriété de l'Utilisateur</h3>
+    <p>Les notes brutes saisies par l'Utilisateur et les documents générés à partir de celles-ci restent la propriété exclusive de l'Utilisateur. L'éditeur ne revendique aucun droit sur ces contenus et ne les utilise pas à d'autres fins que la fourniture du Service.</p>
 
-      <h2>Article 13 — Médiation</h2>
-      <p>Conformément aux articles L.616-1 et R.616-1 du Code de la consommation, l'éditeur propose un dispositif de médiation de la consommation. En cas de litige non résolu, l'Utilisateur peut recourir gratuitement à un médiateur. Les coordonnées du médiateur compétent seront communiquées sur simple demande à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>.</p>
+    <h2>Article 12 — Droit applicable et juridiction compétente</h2>
+    <p>Les présentes CGU sont soumises au droit français. En cas de litige relatif à l'interprétation ou à l'exécution des présentes CGU, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort du siège social de l'éditeur (Lorient), sauf disposition légale contraire applicable au consommateur.</p>
 
-      <h2>Article 14 — Dispositions diverses</h2>
-      <p>Si une clause des présentes CGU était déclarée nulle ou inapplicable, les autres clauses resteraient en vigueur. Le fait pour l'éditeur de ne pas se prévaloir d'un manquement de l'Utilisateur à l'une des obligations prévues aux présentes CGU ne saurait être interprété comme une renonciation à s'en prévaloir ultérieurement.</p>
+    <h2>Article 13 — Médiation</h2>
+    <p>Conformément aux articles L.616-1 et R.616-1 du Code de la consommation, l'éditeur propose un dispositif de médiation de la consommation. En cas de litige non résolu, l'Utilisateur peut recourir gratuitement à un médiateur. Les coordonnées du médiateur compétent seront communiquées sur simple demande à <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a>.</p>
 
-      <p class="cgu-footer-note">Dernière mise à jour : 24 juin 2026<br>
-      Florita — <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a> — <a href="https://florita-cr.netlify.app">florita-cr.netlify.app</a></p>
+    <h2>Article 14 — Dispositions diverses</h2>
+    <p>Si une clause des présentes CGU était déclarée nulle ou inapplicable, les autres clauses resteraient en vigueur. Le fait pour l'éditeur de ne pas se prévaloir d'un manquement de l'Utilisateur à l'une des obligations prévues aux présentes CGU ne saurait être interprété comme une renonciation à s'en prévaloir ultérieurement.</p>
 
-    </div>
-  </main>
+    <p class="cgu-footer-note">Dernière mise à jour : 24 juin 2026<br>
+    Florita — <a href="mailto:bonjour.florita@gmail.com">bonjour.florita@gmail.com</a> — <a href="https://florita-cr.netlify.app">florita-cr.netlify.app</a></p>
+
+  </div>
+
+  <footer class="cgu-back">
+    <a href="login.html">← Retour à la connexion</a>
+  </footer>
+
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const sb = window.supabase.createClient(
-    'https://ipflegbroqefhbucbnrv.supabase.co',
-    'sb_publishable_iXkEAv5hsTgtaqSuza7maA_E17o44dl'
-  );
-  document.getElementById('logout').addEventListener('click', async () => {
-    await sb.auth.signOut();
-    window.location.href = 'login.html';
-  });
-</script>
 </body>
 </html>
