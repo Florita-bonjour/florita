@@ -197,6 +197,18 @@
     .page-footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-light); text-align: center; }
     .page-footer a { font-size: 0.78rem; color: var(--muted); text-decoration: none; font-weight: 500; }
     .page-footer a:hover { color: var(--violet); text-decoration: underline; }
+    .disclaimer-overlay { position: fixed; inset: 0; background: rgba(44,44,42,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
+    .disclaimer-box { background: #fff; border-radius: 16px; padding: 2.2rem; max-width: 480px; width: calc(100% - 2rem); box-shadow: 0 8px 40px rgba(107,76,154,0.18); }
+    .disclaimer-deco { height: 4px; background: linear-gradient(90deg, #D4537E 0%, #6B4C9A 100%); border-radius: 4px 4px 0 0; margin: -2.2rem -2.2rem 1.6rem; }
+    .disclaimer-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+    .disclaimer-text { font-size: 0.88rem; color: var(--muted); font-weight: 500; line-height: 1.72; margin-bottom: 1.3rem; }
+    .disclaimer-text strong { color: var(--text); font-weight: 700; }
+    .disclaimer-check-wrap { display: flex; align-items: flex-start; gap: 0.65rem; margin-bottom: 1.4rem; cursor: pointer; }
+    .disclaimer-check-wrap input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; accent-color: var(--violet); cursor: pointer; }
+    .disclaimer-check-label { font-size: 0.88rem; font-weight: 600; color: var(--text); line-height: 1.5; cursor: pointer; }
+    .disclaimer-btn { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #D4537E 0%, #6B4C9A 100%); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+    .disclaimer-btn:hover:not(:disabled) { opacity: 0.9; }
+    .disclaimer-btn:disabled { opacity: 0.38; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -371,6 +383,19 @@
       </div>
     </div>
 
+  </div>
+
+  <div id="disclaimer-modal" style="display:none" class="disclaimer-overlay" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
+    <div class="disclaimer-box">
+      <div class="disclaimer-deco"></div>
+      <h2 class="disclaimer-title" id="disclaimer-title">Avant d'utiliser ce document</h2>
+      <p class="disclaimer-text">Florita génère un brouillon d'aide à la rédaction. Ce document doit obligatoirement conserver la mention <strong>[BROUILLON — généré avec assistance IA. À valider par l'ergothérapeute — ANFE avril 2026]</strong> ou une formulation équivalente. La suppression de cette mention sans équivalent engage votre seule responsabilité.</p>
+      <label class="disclaimer-check-wrap">
+        <input type="checkbox" id="disclaimer-check" />
+        <span class="disclaimer-check-label">J'ai lu et je m'engage à respecter cette obligation</span>
+      </label>
+      <button id="disclaimer-btn" class="disclaimer-btn" disabled>Accéder à mon brouillon</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

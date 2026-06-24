@@ -130,7 +130,28 @@ document.getElementById('cr-form').addEventListener('submit', async (e) => {
     destination, notes, measures, sexe, dateVad, ville,
     draft_id: draftId,
   }));
-  window.location.href = 'index.html';
+
+  const sb  = window.floritaSb;
+  const { data: { session } } = await sb.auth.getSession();
+  const hasSeen = session?.user?.user_metadata?.has_seen_disclaimer;
+  if (hasSeen) { window.location.href = 'index.html'; return; }
+
+  const modal = document.getElementById('disclaimer-modal');
+  const check = document.getElementById('disclaimer-check');
+  const btn   = document.getElementById('disclaimer-btn');
+  modal.style.display = '';
+  check.focus();
+
+  check.addEventListener('change', function() {
+    btn.disabled = !check.checked;
+  });
+
+  btn.addEventListener('click', async function() {
+    btn.disabled    = true;
+    btn.textContent = 'Chargement…';
+    await sb.auth.updateUser({ data: { has_seen_disclaimer: true } });
+    window.location.href = 'index.html';
+  }, { once: true });
 });
 
 /* ── Chargement des trames ─────────────────────────────────────────── */
